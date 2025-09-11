@@ -1,0 +1,1231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>OKC Parking Threshold Calculator</title>
+  <style>
+    body {
+      font-family: Tahoma, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      line-height: 1.5;
+      color: #333;
+    }
+    
+    h1 {
+      color: #2c3e50;
+      margin-bottom: 30px;
+      font-weight: 600;
+    }
+    
+    .input-row {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin: 15px 0;
+    }
+    
+    .input-row select,
+    .input-row input[type="number"] {
+      flex: 1;
+      padding: 12px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+    
+    .input-row select:focus,
+    .input-row input[type="number"]:focus {
+      outline: none;
+      border-color: #007bff;
+      box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.1);
+    }
+    
+    .info {
+      white-space: nowrap;
+      font-style: italic;
+      color: #666;
+      min-width: 60px;
+    }
+    
+    button {
+      background: #007bff;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      margin: 10px 10px 10px 0;
+      font-family: Tahoma, sans-serif;
+    }
+    
+    button:hover {
+      background: #0056b3;
+    }
+    
+    #formula, #results {
+      margin-top: 20px;
+      padding: 20px;
+      background: #f8f9fa;
+      border-radius: 8px;
+      border: 1px solid #e9ecef;
+      display: none;
+    }
+    
+    .fraction {
+      display: inline-block;
+      text-align: center;
+      vertical-align: middle;
+      margin: 0 4px;
+    }
+    
+    .fraction .num {
+      display: block;
+      font-size: 0.9em;
+    }
+    
+    .fraction .den {
+      display: block;
+      font-size: 0.9em;
+      border-top: 1px solid #000;
+    }
+    
+    optgroup {
+      font-weight: 600;
+      color: #2c3e50;
+      padding: 5px 0;
+    }
+    
+    option {
+      font-weight: normal;
+      padding: 3px;
+    }
+
+    
+    .cap-note {
+      color: #e74c3c;
+      font-weight: 600;
+    }
+    
+    #comparisonResult, #treeCalculation {
+      margin-top: 20px;
+      padding: 20px;
+      border-radius: 8px;
+      background: #f8f9fa;
+      border: 1px solid #e9ecef;
+    }
+    
+    #treeCalculation h4 {
+      margin: 0 0 15px 0;
+      color: #2c3e50;
+    }
+    
+    #treeCalculation p {
+      margin: 10px 0;
+    }
+    
+    .landscaping-inputs {
+      background: #f8f9fa;
+      padding: 25px;
+      border-radius: 8px;
+      margin: 30px 0;
+      border: 1px solid #e9ecef;
+    }
+    
+    .landscaping-inputs h3 {
+      margin: 0 0 20px 0;
+      text-align: center;
+      color: #2c3e50;
+      font-weight: 600;
+    }
+
+
+
+  </style>
+</head>
+<body>
+  <h1>OKC Parking Threshold Calculator</h1>
+
+  <!-- Land Use -->
+  <div class="input-row">
+    <select id="landUse">
+      <option value="">Select Land Use</option>
+	  <optgroup label="PARKING">
+         <option value="Parking Lot as a Principal Use">Parking Lot as a Principal Use</option>
+	  </optgroup>
+      
+      <optgroup label="RESIDENTIAL - HOUSING">
+        <option value="Cottage Court">Cottage Court</option>
+        <option value="Detached Dwelling">Detached Dwelling</option>
+        <option value="Land Lease Community">Land Lease Community</option>
+        <option value="Live-Work Dwelling">Live-Work Dwelling</option>
+        <option value="Manufactured Dwelling, Detached">Manufactured Dwelling, Detached</option>
+        <option value="Mixed Uses and Dwellings">Mixed Uses and Dwellings</option>
+        <option value="Multi-Dwelling">Multi-Dwelling</option>
+        <option value="Three or Four Dwelling">Three or Four Dwelling</option>
+        <option value="Townhouse">Townhouse</option>
+        <option value="Two-Dwelling">Two-Dwelling</option>
+      </optgroup>
+
+      <optgroup label="RESIDENTIAL - SUPPORT HOUSING">
+        <option value="Congregate Care / Nursing Home">Congregate Care / Nursing Home</option>
+        <option value="Group Home Facility">Group Home Facility</option>
+        <option value="Group Residential">Group Residential</option>
+        <option value="Re-Entry Facility">Re-Entry Facility</option>
+        <option value="Residential Facilities">Residential Facilities</option>
+        <option value="Senior Independent Living">Senior Independent Living</option>
+        <option value="Supportive Housing">Supportive Housing</option>
+      </optgroup>
+
+      <optgroup label="CIVIC">
+        <option value="Colleges or Universities">Colleges or Universities</option>
+        <option value="Emergency or Homeless Shelter and Feeding Sites">Emergency or Homeless Shelter and Feeding Sites</option>
+        <option value="Forced Detention and Correction Facilities">Forced Detention and Correction Facilities</option>
+        <option value="Library Services and Community Centers">Library Services and Community Centers</option>
+        <option value="Military Installation">Military Installation</option>
+        <option value="Museums">Museums</option>
+        <option value="Neighborhood Park">Neighborhood Park</option>
+        <option value="Religious Institution">Religious Institution</option>
+        <option value="School, Major">School, Major</option>
+        <option value="School, Minor">School, Minor</option>
+      </optgroup>
+
+      <optgroup label="COMMERCIAL - ANIMAL SERVICES">
+        <option value="Animal Internment">Animal Internment</option>
+        <option value="Horse Stable">Horse Stable</option>
+        <option value="Kennel">Kennel</option>
+        <option value="Livestock Auction">Livestock Auction</option>
+      </optgroup>
+
+      <optgroup label="COMMERCIAL - AUTOMOTIVE & EQUIPMENT">
+        <option value="Automobile Vehicle Impound Yards and Damaged Vehicle Auctions and Sales">Automobile Vehicle Impound Yards and Damaged Vehicle Auctions and Sales</option>
+        <option value="Automobile and Vehicle Sales and Rental">Automobile and Vehicle Sales and Rental</option>
+        <option value="Cleaning and Repairs">Cleaning and Repairs</option>
+        <option value="Gasoline and Fueling Sales">Gasoline and Fueling Sales</option>
+        <option value="Sales and Rentals, Farm and Heavy Vehicles and Equipment">Sales and Rentals, Farm and Heavy Vehicles and Equipment</option>
+        <option value="Sales and Rentals, Manufactured (Mobile) Homes">Sales and Rentals, Manufactured (Mobile) Homes</option>
+        <option value="Vehicle Auction">Vehicle Auction</option>
+        <option value="Vehicle Storage">Vehicle Storage</option>
+      </optgroup>
+
+      <optgroup label="COMMERCIAL - DAY CARE">
+        <option value="Adult Daycare">Adult Daycare</option>
+        <option value="Childcare Centers">Childcare Centers</option>
+        <option value="Family Day Care Homes">Family Day Care Homes</option>
+      </optgroup>
+
+      <optgroup label="COMMERCIAL - ENTERTAINMENT & LEISURE">
+        <option value="Adult Entertainment">Adult Entertainment</option>
+        <option value="Drinking or Smoking Establishment">Drinking or Smoking Establishment</option>
+        <option value="Event Center">Event Center</option>
+        <option value="Participant Recreation">Participant Recreation</option>
+        <option value="Spectator Sports / Performance Venue">Spectator Sports / Performance Venue</option>
+        <option value="Spectator Sports and Entertainment">Spectator Sports and Entertainment</option>
+      </optgroup>
+
+      <optgroup label="COMMERCIAL - FINANCIAL SERVICES">
+        <option value="Financial Institution">Financial Institution</option>
+        <option value="Payday or Title Loan Agencies">Payday or Title Loan Agencies</option>
+      </optgroup>
+
+      <optgroup label="COMMERCIAL - FOOD & BEVERAGE">
+        <option value="Alcoholic Beverage Retail Sales">Alcoholic Beverage Retail Sales</option>
+        <option value="Food Service">Food Service</option>
+        <option value="Food Truck Court">Food Truck Court</option>
+        <option value="Grocery Store">Grocery Store</option>
+        <option value="Microbrewery/Distillery">Microbrewery/Distillery</option>
+        <option value="Restaurant">Restaurant</option>
+      </optgroup>
+
+      <optgroup label="COMMERCIAL - FUNERAL & INTERMENT SERVICES">
+        <option value="Cremating">Cremating</option>
+        <option value="Interring">Interring</option>
+        <option value="Undertaking">Undertaking</option>
+      </optgroup>
+
+      <optgroup label="COMMERCIAL - LODGING ACCOMMODATIONS">
+        <option value="Bed and Breakfast">Bed and Breakfast</option>
+        <option value="Campground">Campground</option>
+        <option value="Hotel">Hotel</option>
+      </optgroup>
+
+      <optgroup label="COMMERCIAL - MEDICAL">
+        <option value="Hospital">Hospital</option>
+        <option value="Inpatient Rehabilitation Facilities and Palliative Care">Inpatient Rehabilitation Facilities and Palliative Care</option>
+        <option value="Medical Marijuana Dispensary">Medical Marijuana Dispensary</option>
+        <option value="Medical Services">Medical Services</option>
+      </optgroup>
+
+      <optgroup label="COMMERCIAL - OFFICE & BUSINESS SERVICES">
+        <option value="Building Services">Building Services</option>
+        <option value="Offices">Offices</option>
+      </optgroup>
+
+      <optgroup label="COMMERCIAL - PERSONAL SERVICES">
+        <option value="Personal Services">Personal Services</option>
+        <option value="Personal Storage">Personal Storage</option>
+        <option value="Repair Services Consumer">Repair Services Consumer</option>
+      </optgroup>
+
+      <optgroup label="COMMERCIAL - RETAIL">
+        <option value="Adult Novelty Shop">Adult Novelty Shop</option>
+        <option value="Commercial Kiosk">Commercial Kiosk</option>
+        <option value="Community Shopping Center">Community Shopping Center</option>
+        <option value="Construction Sales and Services">Construction Sales and Services</option>
+        <option value="Neighborhood Business">Neighborhood Business</option>
+        <option value="Neighborhood Shopping Center">Neighborhood Shopping Center</option>
+        <option value="Outdoor Swap Meet">Outdoor Swap Meet</option>
+        <option value="Pawn Shops">Pawn Shops</option>
+        <option value="Re-usable Materials Collections and Sales">Re-usable Materials Collections and Sales</option>
+        <option value="Retail Sales">Retail Sales</option>
+      </optgroup>
+
+      <optgroup label="INDUSTRIAL">
+        <option value="Aboveground Flammable Liquid Storage">Aboveground Flammable Liquid Storage</option>
+        <option value="Custom Manufacturing">Custom Manufacturing</option>
+        <option value="Hazardous Waste Disposal">Hazardous Waste Disposal</option>
+        <option value="Industrial">Industrial</option>
+        <option value="Marijuana Processing">Marijuana Processing</option>
+        <option value="Recycling Processing Facilities">Recycling Processing Facilities</option>
+        <option value="Sanitary Landfill">Sanitary Landfill</option>
+        <option value="Warehouse">Warehouse</option>
+        <option value="Wholesaling Storage and Distribution">Wholesaling Storage and Distribution</option>
+      </optgroup>
+
+      <optgroup label="EXTRACTIVE">
+        <option value="Mining and Processing">Mining and Processing</option>
+        <option value="Underground Injection Well">Underground Injection Well</option>
+      </optgroup>
+
+      <optgroup label="AGRICULTURE">
+        <option value="Agricultural Processing">Agricultural Processing</option>
+        <option value="Agricultural Supplies and Services">Agricultural Supplies and Services</option>
+        <option value="Animal Raising">Animal Raising</option>
+        <option value="Animal Waste Processing">Animal Waste Processing</option>
+        <option value="Composting Facility and Accessory">Composting Facility and Accessory</option>
+        <option value="Composting Horticulture">Composting Horticulture</option>
+        <option value="Horticulture">Horticulture</option>
+        <option value="Stockyards">Stockyards</option>
+      </optgroup>
+    </select>
+    <span id="useInfo" class="info"></span>
+  </div>
+
+  <!-- Dwelling Units -->
+  <div id="dwellingUnitsContainer" class="input-row" style="display: none;">
+    <input type="number" id="dwellingUnits" placeholder="Enter Number of Dwelling Units">
+    <span class="info sizeInfo"></span>
+  </div>
+
+  <!-- Mixed-Use Non-Residential Selection -->
+  <div id="mixedUseNonResContainer" class="input-row" style="display: none;">
+    <select id="mixedUseNonRes">
+      <option value="">Select Non-Residential Use</option>
+      
+      <optgroup label="CIVIC">
+        <option value="Colleges or Universities">Colleges or Universities</option>
+        <option value="Emergency or Homeless Shelter and Feeding Sites">Emergency or Homeless Shelter and Feeding Sites</option>
+        <option value="Forced Detention and Correction Facilities">Forced Detention and Correction Facilities</option>
+        <option value="Library Services and Community Centers">Library Services and Community Centers</option>
+        <option value="Military Installation">Military Installation</option>
+        <option value="Museums">Museums</option>
+        <option value="Neighborhood Park">Neighborhood Park</option>
+        <option value="Religious Institution">Religious Institution</option>
+        <option value="School, Major">School, Major</option>
+        <option value="School, Minor">School, Minor</option>
+      </optgroup>
+
+      <optgroup label="COMMERCIAL - ANIMAL SERVICES">
+        <option value="Animal Internment">Animal Internment</option>
+        <option value="Horse Stable">Horse Stable</option>
+        <option value="Kennel">Kennel</option>
+        <option value="Livestock Auction">Livestock Auction</option>
+      </optgroup>
+
+      <optgroup label="COMMERCIAL - AUTOMOTIVE & EQUIPMENT">
+        <option value="Automobile Vehicle Impound Yards and Damaged Vehicle Auctions and Sales">Automobile Vehicle Impound Yards and Damaged Vehicle Auctions and Sales</option>
+        <option value="Automobile and Vehicle Sales and Rental">Automobile and Vehicle Sales and Rental</option>
+        <option value="Cleaning and Repairs">Cleaning and Repairs</option>
+        <option value="Gasoline and Fueling Sales">Gasoline and Fueling Sales</option>
+        <option value="Sales and Rentals, Farm and Heavy Vehicles and Equipment">Sales and Rentals, Farm and Heavy Vehicles and Equipment</option>
+        <option value="Sales and Rentals, Manufactured (Mobile) Homes">Sales and Rentals, Manufactured (Mobile) Homes</option>
+        <option value="Vehicle Auction">Vehicle Auction</option>
+        <option value="Vehicle Storage">Vehicle Storage</option>
+      </optgroup>
+
+      <optgroup label="COMMERCIAL - DAY CARE">
+        <option value="Adult Daycare">Adult Daycare</option>
+        <option value="Childcare Centers">Childcare Centers</option>
+        <option value="Family Day Care Homes">Family Day Care Homes</option>
+      </optgroup>
+
+      <optgroup label="COMMERCIAL - ENTERTAINMENT & LEISURE">
+        <option value="Adult Entertainment">Adult Entertainment</option>
+        <option value="Drinking or Smoking Establishment">Drinking or Smoking Establishment</option>
+        <option value="Event Center">Event Center</option>
+        <option value="Participant Recreation">Participant Recreation</option>
+        <option value="Spectator Sports / Performance Venue">Spectator Sports / Performance Venue</option>
+        <option value="Spectator Sports and Entertainment">Spectator Sports and Entertainment</option>
+      </optgroup>
+
+      <optgroup label="COMMERCIAL - FINANCIAL SERVICES">
+        <option value="Financial Institution">Financial Institution</option>
+        <option value="Payday or Title Loan Agencies">Payday or Title Loan Agencies</option>
+      </optgroup>
+
+      <optgroup label="COMMERCIAL - FOOD & BEVERAGE">
+        <option value="Alcoholic Beverage Retail Sales">Alcoholic Beverage Retail Sales</option>
+        <option value="Food Service">Food Service</option>
+        <option value="Food Truck Court">Food Truck Court</option>
+        <option value="Grocery Store">Grocery Store</option>
+        <option value="Microbrewery/Distillery">Microbrewery/Distillery</option>
+        <option value="Restaurant">Restaurant</option>
+      </optgroup>
+
+      <optgroup label="COMMERCIAL - FUNERAL & INTERMENT SERVICES">
+        <option value="Cremating">Cremating</option>
+        <option value="Interring">Interring</option>
+        <option value="Undertaking">Undertaking</option>
+      </optgroup>
+
+      <optgroup label="COMMERCIAL - LODGING ACCOMMODATIONS">
+        <option value="Bed and Breakfast">Bed and Breakfast</option>
+        <option value="Campground">Campground</option>
+        <option value="Hotel">Hotel</option>
+      </optgroup>
+
+      <optgroup label="COMMERCIAL - MEDICAL">
+        <option value="Hospital">Hospital</option>
+        <option value="Inpatient Rehabilitation Facilities and Palliative Care">Inpatient Rehabilitation Facilities and Palliative Care</option>
+        <option value="Medical Marijuana Dispensary">Medical Marijuana Dispensary</option>
+        <option value="Medical Services">Medical Services</option>
+      </optgroup>
+
+      <optgroup label="COMMERCIAL - OFFICE & BUSINESS SERVICES">
+        <option value="Building Services">Building Services</option>
+        <option value="Offices">Offices</option>
+      </optgroup>
+
+      <optgroup label="COMMERCIAL - PERSONAL SERVICES">
+        <option value="Personal Services">Personal Services</option>
+        <option value="Personal Storage">Personal Storage</option>
+        <option value="Repair Services Consumer">Repair Services Consumer</option>
+      </optgroup>
+
+      <optgroup label="COMMERCIAL - RETAIL">
+        <option value="Adult Novelty Shop">Adult Novelty Shop</option>
+        <option value="Commercial Kiosk">Commercial Kiosk</option>
+        <option value="Community Shopping Center">Community Shopping Center</option>
+        <option value="Construction Sales and Services">Construction Sales and Services</option>
+        <option value="Neighborhood Business">Neighborhood Business</option>
+        <option value="Neighborhood Shopping Center">Neighborhood Shopping Center</option>
+        <option value="Outdoor Swap Meet">Outdoor Swap Meet</option>
+        <option value="Pawn Shops">Pawn Shops</option>
+        <option value="Re-usable Materials Collections and Sales">Re-usable Materials Collections and Sales</option>
+        <option value="Retail Sales">Retail Sales</option>
+      </optgroup>
+
+      <optgroup label="INDUSTRIAL">
+        <option value="Aboveground Flammable Liquid Storage">Aboveground Flammable Liquid Storage</option>
+        <option value="Custom Manufacturing">Custom Manufacturing</option>
+        <option value="Hazardous Waste Disposal">Hazardous Waste Disposal</option>
+        <option value="Industrial">Industrial</option>
+        <option value="Marijuana Processing">Marijuana Processing</option>
+        <option value="Recycling Processing Facilities">Recycling Processing Facilities</option>
+        <option value="Sanitary Landfill">Sanitary Landfill</option>
+        <option value="Warehouse">Warehouse</option>
+        <option value="Wholesaling Storage and Distribution">Wholesaling Storage and Distribution</option>
+      </optgroup>
+
+      <optgroup label="EXTRACTIVE">
+        <option value="Mining and Processing">Mining and Processing</option>
+        <option value="Underground Injection Well">Underground Injection Well</option>
+      </optgroup>
+
+      <optgroup label="AGRICULTURE">
+        <option value="Agricultural Processing">Agricultural Processing</option>
+        <option value="Agricultural Supplies and Services">Agricultural Supplies and Services</option>
+        <option value="Animal Raising">Animal Raising</option>
+        <option value="Animal Waste Processing">Animal Waste Processing</option>
+        <option value="Composting Facility and Accessory">Composting Facility and Accessory</option>
+        <option value="Composting Horticulture">Composting Horticulture</option>
+        <option value="Horticulture">Horticulture</option>
+        <option value="Stockyards">Stockyards</option>
+      </optgroup>
+    </select>
+    <span id="mixedUseInfo" class="info"></span>
+  </div>
+
+  <!-- Gross Floor Area -->
+  <div id="floorAreaContainer" class="input-row" style="display: none;">
+    <input type="number" id="floorArea" placeholder="Enter Gross Floor Area (sq ft)">
+    <span class="info sizeInfo"></span>
+  </div>
+
+  <!-- LUTA -->
+  <div id="lutaContainer" class="input-row" style="display: none;">
+    <select id="luta">
+      <option value="">Select LUTA</option>
+      <option value="Downtown/Urban High">Downtown/Urban High</option>
+      <option value="Urban Medium">Urban Medium</option>
+      <option value="Urban Low & Rural">Urban Low & Rural</option>
+    </select>
+    <span id="lutaInfo" class="info"></span>
+  </div>
+
+  <button type="button" onclick="calculateThreshold()">Calculate</button>
+  <button type="button" class="reset-button" onclick="resetCalculator()">Reset</button>
+
+  <div id="formula"></div>
+  <div id="results"></div>
+
+  <script>
+    // Updated demand-level mapping based on Table 59-43.1
+    const DEMAND_LEVELS = {
+      "Parking Lot as a Principal Use": "PARKING",
+      "Aboveground Flammable Liquid Storage": "L",
+      "Adult Daycare": "L",
+      "Adult Entertainment": "M",
+      "Adult Novelty Shop": "M",
+      "Agricultural Processing": "L",
+      "Agricultural Supplies and Services": "L",
+      "Alcoholic Beverage Retail Sales": "M",
+      "Animal Internment": "L",
+      "Animal Raising": "L",
+      "Animal Waste Processing": "L",
+      "Automobile and Vehicle Sales and Rental": "M",
+      "Automobile Vehicle Impound Yards and Damaged Vehicle Auctions and Sales": "M",
+      "Bed and Breakfast": "L",
+      "Building Services": "M",
+      "Campground": "H",
+      "Childcare Centers": "L",
+      "Cleaning and Repairs": "M",
+      "Colleges or Universities": "H",
+      "Commercial Kiosk": "M",
+      "Community Shopping Center": "M",
+      "Composting Facility and Accessory": "L",
+      "Composting Horticulture": "L",
+      "Congregate Care / Nursing Home": "L",
+      "Construction Sales and Services": "M",
+      "Cottage Court": "R",
+      "Cremating": "M",
+      "Custom Manufacturing": "M",
+      "Detached Dwelling": "R",
+      "Drinking or Smoking Establishment": "VH",
+      "Emergency or Homeless Shelter and Feeding Sites": "L",
+      "Event Center": "VH",
+      "Family Day Care Homes": "L",
+      "Financial Institution": "H",
+      "Food Service": "M",
+      "Food Truck Court": "M",
+      "Forced Detention and Correction Facilities": "M",
+      "Gasoline and Fueling Sales": "H",
+      "Grocery Store": "M",
+      "Group Home Facility": "L",
+      "Group Residential": "L",
+      "Hazardous Waste Disposal": "M",
+      "Horse Stable": "L",
+      "Horticulture": "L",
+      "Hospital": "H",
+      "Hotel": "L",
+      "Industrial": "M",
+      "Inpatient Rehabilitation Facilities and Palliative Care": "M",
+      "Interring": "M",
+      "Kennel": "L",
+      "Land Lease Community": "R",
+      "Library Services and Community Centers": "M",
+      "Livestock Auction": "H",
+      "Live-Work Dwelling": "MIXED",
+      "Manufactured Dwelling, Detached": "R",
+      "Marijuana Processing": "M",
+      "Medical Marijuana Dispensary": "M",
+      "Medical Services": "M",
+      "Microbrewery/Distillery": "M",
+      "Military Installation": "H",
+      "Mining and Processing": "M",
+      "Mixed Uses and Dwellings": "MIXED",
+      "Multi-Dwelling": "R",
+      "Museums": "M",
+      "Neighborhood Business": "M",
+      "Neighborhood Park": "M",
+      "Neighborhood Shopping Center": "M",
+      "Offices": "M",
+      "Outdoor Swap Meet": "M",
+      "Participant Recreation": "VH",
+      "Pawn Shops": "M",
+      "Payday or Title Loan Agencies": "M",
+      "Personal Services": "M",
+      "Personal Storage": "M",
+      "Recycling Processing Facilities": "M",
+      "Re-Entry Facility": "L",
+      "Re-usable Materials Collections and Sales": "M",
+      "Religious Institution": "H",
+      "Repair Services Consumer": "M",
+      "Residential Facilities": "L",
+      "Restaurant": "VH",
+      "Retail Sales": "M",
+      "Sales and Rentals, Farm and Heavy Vehicles and Equipment": "H",
+      "Sales and Rentals, Manufactured (Mobile) Homes": "H",
+      "Sanitary Landfill": "M",
+      "School, Major": "H",
+      "School, Minor": "M",
+      "Senior Independent Living": "L",
+      "Spectator Sports / Performance Venue": "VH",
+      "Spectator Sports and Entertainment": "VH",
+      "Stockyards": "H",
+      "Supportive Housing": "L",
+      "Three or Four Dwelling": "R",
+      "Townhouse": "R",
+      "Two-Dwelling": "R",
+      "Underground Injection Well": "L",
+      "Undertaking": "M",
+      "Vehicle Auction": "H",
+      "Vehicle Storage": "L",
+      "Warehouse": "L",
+      "Wholesaling Storage and Distribution": "L"
+    };
+
+    // Base threshold rates
+    const BASE_THRESHOLD_RATES = { L:2, M:4, H:6, VH:10, R:2 };
+
+    // Floor-area multipliers
+    const MULTIPLIERS = {
+      0:      { "Downtown/Urban High": .750, "Urban Medium": .900, "Urban Low & Rural": 1.000 },
+      5000:   { "Downtown/Urban High": .742, "Urban Medium": .891, "Urban Low & Rural": .990 },
+      10000:  { "Downtown/Urban High": .735, "Urban Medium": .882, "Urban Low & Rural": .980 },
+      20000:  { "Downtown/Urban High": .720, "Urban Medium": .864, "Urban Low & Rural": .960 },
+      30000:  { "Downtown/Urban High": .705, "Urban Medium": .846, "Urban Low & Rural": .940 },
+      50000:  { "Downtown/Urban High": .675, "Urban Medium": .810, "Urban Low & Rural": .900 },
+      75000:  { "Downtown/Urban High": .637, "Urban Medium": .765, "Urban Low & Rural": .850 },
+      100000: { "Downtown/Urban High": .600, "Urban Medium": .720, "Urban Low & Rural": .800 },
+      150000: { "Downtown/Urban High": .525, "Urban Medium": .630, "Urban Low & Rural": .700 },
+      200000: { "Downtown/Urban High": .450, "Urban Medium": .540, "Urban Low & Rural": .600 },
+      250000: { "Downtown/Urban High": .375, "Urban Medium": .450, "Urban Low & Rural": .500 },
+	  500000: { "Downtown/Urban High": .187, "Urban Medium": .225, "Urban Low & Rural": .250 }
+    };
+
+    // Residential multipliers
+    const RESIDENTIAL_MULTIPLIERS = {
+      "Downtown/Urban High": .750,
+      "Urban Medium": .900,
+      "Urban Low & Rural": 1.000
+    };
+
+    // Global variable to store current threshold for comparison
+    let currentThreshold = 0;
+
+    // Auto-populate info fields
+    document.getElementById('landUse').addEventListener('change', updateInfo);
+    document.getElementById('floorArea').addEventListener('input', updateInfo);
+    document.getElementById('dwellingUnits').addEventListener('input', updateInfo);
+    document.getElementById('mixedUseNonRes').addEventListener('change', updateInfo);
+    document.getElementById('luta').addEventListener('change', updateInfo);
+
+    function updateInfo() {
+      const lu = document.getElementById('landUse').value;
+      const d  = DEMAND_LEVELS[lu] || '';
+      
+      // If no land use selected, hide all other inputs
+      if (!lu) {
+        document.getElementById('floorAreaContainer').style.display = 'none';
+        document.getElementById('dwellingUnitsContainer').style.display = 'none';
+        document.getElementById('mixedUseNonResContainer').style.display = 'none';
+        document.getElementById('lutaContainer').style.display = 'none';
+        document.getElementById('useInfo').textContent = '';
+        document.getElementById('lutaInfo').textContent = '';
+        document.getElementById('mixedUseInfo').textContent = '';
+        return;
+      }
+      
+      // Handle Parking Lot as Principal Use
+      if (d === 'PARKING') {
+        // Hide all input containers
+        document.getElementById('floorAreaContainer').style.display = 'none';
+        document.getElementById('dwellingUnitsContainer').style.display = 'none';
+        document.getElementById('mixedUseNonResContainer').style.display = 'none';
+        document.getElementById('lutaContainer').style.display = 'none';
+        
+        document.getElementById('useInfo').textContent = ' ';
+        document.getElementById('lutaInfo').textContent = '';
+        document.getElementById('mixedUseInfo').textContent = '';
+        
+        // Skip threshold calculation and go directly to landscaping
+        showParkingLotCalculation();
+        return;
+      }
+      
+      // Show LUTA container once land use is selected
+      document.getElementById('lutaContainer').style.display = 'flex';
+      
+      // Handle mixed use cases
+      const isMixedUse = (d === 'MIXED');
+      const isResOnly = (d === 'R');
+      const isNonResOnly = (!isResOnly && !isMixedUse && d !== '' && d !== 'PARKING');
+
+      // Show/hide input containers based on land use type
+      document.getElementById('floorAreaContainer').style.display = (isNonResOnly || isMixedUse) ? 'flex' : 'none';
+      document.getElementById('dwellingUnitsContainer').style.display = (isResOnly || isMixedUse) ? 'flex' : 'none';
+      document.getElementById('mixedUseNonResContainer').style.display = isMixedUse ? 'flex' : 'none';
+
+      // Update info display
+      let infoText = '';
+      if (isMixedUse) {
+        const selectedNonRes = document.getElementById('mixedUseNonRes').value;
+        if (selectedNonRes) {
+          const nonResDemand = DEMAND_LEVELS[selectedNonRes];
+          const nonResBR = BASE_THRESHOLD_RATES[nonResDemand];
+          infoText = `Mixed Use: ${selectedNonRes} (${nonResBR}) + Residential (2)`;
+        } else {
+          infoText = 'Base Ratio: Select Non-Residential Use + Residential (2)';
+        }
+      } else if (d) {
+        const br = BASE_THRESHOLD_RATES[d] || '';
+        infoText = `Base Ratio: ${br}`;
+      }
+      document.getElementById('useInfo').textContent = infoText;
+
+      // Update mixed use info
+      const selectedNonRes = document.getElementById('mixedUseNonRes').value;
+      if (isMixedUse && selectedNonRes) {
+        const nonResDemand = DEMAND_LEVELS[selectedNonRes];
+        const nonResBR = BASE_THRESHOLD_RATES[nonResDemand];
+        document.getElementById('mixedUseInfo').textContent = `Base Ratio: ${nonResBR}`;
+      } else {
+        document.getElementById('mixedUseInfo').textContent = '';
+      }
+
+      // Update size info for each input separately
+      const floorAreaInfo = document.querySelector('#floorAreaContainer .sizeInfo');
+      const dwellingUnitsInfo = document.querySelector('#dwellingUnitsContainer .sizeInfo');
+      const floorAreaInput = document.getElementById('floorArea');
+      
+      if (floorAreaInfo) floorAreaInfo.textContent = 'Sq Ft';
+      if (dwellingUnitsInfo) dwellingUnitsInfo.textContent = 'Units';
+      
+      // Update placeholder text based on use type
+      if (isMixedUse) {
+        floorAreaInput.placeholder = 'Enter Non-Residential Gross Floor Area (sq ft)';
+      } else {
+        floorAreaInput.placeholder = 'Enter Gross Floor Area (sq ft)';
+      }
+
+      // Update multiplier info
+      const ctx = document.getElementById('luta').value;
+      let mtxt = '';
+      if (ctx && (isNonResOnly || isMixedUse)) {
+        const m = getFloorMultiplier(parseFloat(document.getElementById('floorArea').value) || 0, ctx);
+        mtxt = `× ${m.toFixed(3)}`;
+      } else if (ctx && isResOnly) {
+        const m = RESIDENTIAL_MULTIPLIERS[ctx];
+        mtxt = `× ${m.toFixed(3)}`;
+      }
+      document.getElementById('lutaInfo').textContent = mtxt;
+    }
+
+    // Function to handle Parking Lot as Principal Use
+    function showParkingLotCalculation() {
+      // Clear any existing results
+      document.getElementById('formula').style.display = 'none';
+      document.getElementById('results').style.display = 'none';
+      
+      const landscapingWrapper = document.getElementById('landscapingWrapper');
+      if (landscapingWrapper) landscapingWrapper.remove();
+      
+      const existingComparisonResult = document.getElementById('comparisonResult');
+      if (existingComparisonResult) existingComparisonResult.remove();
+      
+      const existingTreeCalculation = document.getElementById('treeCalculation');
+      if (existingTreeCalculation) existingTreeCalculation.remove();
+
+      // Set global threshold to 0 so any number of spaces will be "above threshold"
+      currentThreshold = 0;
+
+      // Show parking spaces input directly
+      let existingInput = document.getElementById('desiredSpacesContainer');
+      if (!existingInput) {
+        // Create wrapper container
+        const landscapingWrapperNew = document.createElement('div');
+        landscapingWrapperNew.className = 'landscaping-inputs';
+        landscapingWrapperNew.id = 'landscapingWrapper';
+        
+        const title = document.createElement('h3');
+        title.textContent = 'Parking Lot Landscaping Requirements';
+        landscapingWrapperNew.appendChild(title);
+
+        const desiredInputDiv = document.createElement('div');
+        desiredInputDiv.className = 'input-row';
+        desiredInputDiv.id = 'desiredSpacesContainer';
+
+        const input = document.createElement('input');
+        input.type = 'number';
+        input.id = 'desiredSpaces';
+        input.placeholder = 'Enter Number of Parking Spaces';
+
+        const span = document.createElement('span');
+        span.className = 'info';
+        span.textContent = 'Spaces';
+
+        desiredInputDiv.appendChild(input);
+        desiredInputDiv.appendChild(span);
+
+        // Add calculation button
+        const buttonDiv = document.createElement('div');
+        buttonDiv.style.marginTop = '15px';
+        buttonDiv.style.textAlign = 'center';
+
+        const compareButton = document.createElement('button');
+        compareButton.textContent = 'Calculate Landscaping Requirements';
+        compareButton.style.padding = '10px 20px';
+        compareButton.style.fontSize = '16px';
+        compareButton.style.backgroundColor = '#007bff';
+        compareButton.style.color = 'white';
+        compareButton.style.border = 'none';
+        compareButton.style.borderRadius = '5px';
+        compareButton.style.cursor = 'pointer';
+        compareButton.style.fontFamily = 'Tahoma, sans-serif';
+        compareButton.onmouseover = function() { this.style.backgroundColor = '#0056b3'; };
+        compareButton.onmouseout = function() { this.style.backgroundColor = '#007bff'; };
+        compareButton.onclick = function () {
+          compareToThreshold();
+        };
+
+        buttonDiv.appendChild(compareButton);
+
+        landscapingWrapperNew.appendChild(desiredInputDiv);
+        landscapingWrapperNew.appendChild(buttonDiv);
+
+        // Insert after the land use selection
+        const landUseRow = document.querySelector('.input-row');
+        landUseRow.insertAdjacentElement('afterend', landscapingWrapperNew);
+      }
+    }
+
+    function getFloorMultiplier(gfa, ctx) {
+      const breaks = Object.keys(MULTIPLIERS).map(Number).sort((a,b) => b - a);
+      for (const b of breaks) {
+        if (gfa >= b) {
+          return MULTIPLIERS[b][ctx];
+        }
+      }
+      return MULTIPLIERS[0][ctx];
+    }
+
+    // Updated function to calculate actual number of trees based on new requirements
+    function calculateTreeCount(spaces, isAboveThreshold) {
+      let treeCount = 0;
+      let breakdown = [];
+      let designRequirements = [];
+      
+      // Base minimum trees (1 or Greater)
+      if (spaces >= 1) {
+        if (isAboveThreshold) {
+          treeCount += 3;
+          breakdown.push("Base minimum: 3 trees");
+        } else {
+          treeCount += 2;
+          breakdown.push("Base minimum: 2 trees");
+        }
+      }
+      
+      // Additional trees per spaces (5 or Greater)
+      if (spaces >= 5) {
+        let additionalTrees;
+        if (isAboveThreshold) {
+          additionalTrees = Math.floor(spaces / 3);
+          breakdown.push(`Within parking area (1 per 3 spaces): ${additionalTrees} trees`);
+        } else {
+          additionalTrees = Math.floor(spaces / 5);
+          breakdown.push(`Within parking area (1 per 5 spaces): ${additionalTrees} trees`);
+        }
+        treeCount += additionalTrees;
+      }
+      
+      // Additional trees for 150+ spaces (1 per 15 excess spaces)
+      if (spaces >= 150) {
+        let extraSpaces150 = spaces - 150;
+        let extraTrees150 = Math.floor(extraSpaces150 / 15);
+        breakdown.push(`Additional trees after 150 (1 per 15 excess spaces): ${extraTrees150} trees`);
+        treeCount += extraTrees150;
+      }
+      
+      // Additional trees for 750+ spaces (1 per 15 excess spaces)
+      if (spaces >= 750) {
+        let extraSpaces750 = spaces - 750;
+        let extraTrees750 = Math.floor(extraSpaces750 / 15);
+        breakdown.push(`Additional trees after 750 (1 per 15 excess spaces): ${extraTrees750} trees`);
+        treeCount += extraTrees750;
+      }
+      
+      // Additional trees for 1000+ spaces (1 per 1 excess space) - applies to both above and below threshold
+      if (spaces >= 1000) {
+        let extraSpaces1000 = spaces - 1000;
+        let extraTrees1000 = extraSpaces1000; // 1 per 1 excess space
+        breakdown.push(`Additional trees after 1000 (1 per 1 excess space): ${extraTrees1000} trees`);
+        treeCount += extraTrees1000;
+      }
+      
+      // General Design Requirements
+      if (spaces >= 1) {
+        // Medium/large tree requirements
+        const mediumLargePercent = isAboveThreshold ? 30 : 20;
+        const mediumLargeTrees = Math.ceil(treeCount * (mediumLargePercent / 100));
+        designRequirements.push(`${mediumLargeTrees} tree(s) (${mediumLargePercent}% of total) shall be medium or large tree(s)`);
+        
+        // Interior islands
+        const islandSpacing = isAboveThreshold ? 6 : 10;
+        designRequirements.push(`Interior parking island every ${islandSpacing} spaces (minimum 1 tree each)`);
+        
+        // Landscape medians
+        const medianSpacing = isAboveThreshold ? 4 : 6;
+        designRequirements.push(`Landscape median every ${medianSpacing} rows of parking`);
+        
+        // Terminal islands
+        designRequirements.push("Terminal islands at ends of each parking row (minimum 2 trees each)");
+        
+        // 150+ spaces requirements
+        if (spaces >= 150) {
+          const walkwayMedians = Math.floor(spaces / 150);
+          designRequirements.push(`${walkwayMedians} Interior Pedestrian Walkway Median(s) (1 per 150 spaces)`);
+          
+          const consolidatedAreas = Math.floor(spaces / 375);
+          if (consolidatedAreas > 0) {
+            designRequirements.push(`${consolidatedAreas} Consolidated Tree Planting Area(s) (1 per 375 spaces)`);
+          }
+        }
+      }
+      
+      return { 
+        total: treeCount, 
+        breakdown: breakdown,
+        designRequirements: designRequirements
+      };
+    }
+
+    // Function to compare desired spaces to current threshold
+    function compareToThreshold() {
+      const desired = parseInt(document.getElementById('desiredSpaces').value, 10);
+      if (isNaN(desired) || desired < 0) {
+        alert('Enter a valid number of desired parking spaces.');
+        return;
+      }
+
+      const isAboveThreshold = desired > currentThreshold;
+      
+      // Calculate requirements
+      const treeCalc = calculateTreeCount(desired, isAboveThreshold);
+
+      // Remove any existing result boxes
+      const existingComparisonResult = document.getElementById('comparisonResult');
+      if (existingComparisonResult) {
+        existingComparisonResult.remove();
+      }
+      const existingTreeCalculation = document.getElementById('treeCalculation');
+      if (existingTreeCalculation) {
+        existingTreeCalculation.remove();
+      }
+
+      const landscapingWrapper = document.getElementById('landscapingWrapper');
+
+      // Create threshold status box
+      const statusBox = document.createElement('div');
+      statusBox.id = 'comparisonResult';
+      statusBox.style.marginTop = '20px';
+      statusBox.style.padding = '20px';
+      statusBox.style.borderRadius = '8px';
+      statusBox.style.background = '#f8f9fa';
+      statusBox.style.border = '1px solid #e9ecef';
+      statusBox.style.textAlign = 'center';
+      statusBox.style.fontSize = '18px';
+      statusBox.style.fontWeight = '600';
+
+      let statusMessage = '';
+      if (desired > currentThreshold) {
+        statusMessage = '<strong>ABOVE THRESHOLD</strong>';
+      } else {
+        statusMessage = '<strong>BELOW OR AT THRESHOLD</strong>';
+      }
+      statusBox.innerHTML = statusMessage;
+
+      // Create requirements box
+      const requirementsBox = document.createElement('div');
+      requirementsBox.id = 'treeCalculation';
+      requirementsBox.style.marginTop = '20px';
+      requirementsBox.style.padding = '20px';
+      requirementsBox.style.borderRadius = '8px';
+      requirementsBox.style.background = '#f8f9fa';
+      requirementsBox.style.border = '1px solid #e9ecef';
+
+      let requirementsHTML = '<h4>Landscaping Requirements</h4>';
+      requirementsHTML += `<p><strong>Total Trees Required: ${treeCalc.total}</strong></p>`;
+      
+      // Add design requirements if any
+      if (treeCalc.designRequirements && treeCalc.designRequirements.length > 0) {
+        requirementsHTML += '<h4>General Design Requirements</h4>';
+        requirementsHTML += '<ul style="margin: 0; padding-left: 20px;">';
+        treeCalc.designRequirements.forEach(req => {
+          requirementsHTML += `<li style="margin-bottom: 8px;">${req}</li>`;
+        });
+        requirementsHTML += '</ul>';
+      }
+
+      requirementsBox.innerHTML = requirementsHTML;
+
+      // Add boxes to page
+      landscapingWrapper.insertAdjacentElement('afterend', statusBox);
+      statusBox.insertAdjacentElement('afterend', requirementsBox);
+    }
+
+    // Main calculation and formula display
+    function calculateThreshold() {
+      const lu = document.getElementById('landUse').value;
+      const d = DEMAND_LEVELS[lu];
+      
+      // Handle Parking Lot as Principal Use
+      if (d === 'PARKING') {
+        showParkingLotCalculation();
+        return;
+      }
+      
+      const ctx = document.getElementById('luta').value;
+      
+      if (!lu || !ctx) {
+        alert('Please select both Land Use and LUTA.');
+        return;
+      }
+
+      let formula = '', rawValue, threshold, minReq;
+
+      // Mixed Use cases
+      if (d === 'MIXED') {
+        const gfa = parseFloat(document.getElementById('floorArea').value);
+        const du = parseInt(document.getElementById('dwellingUnits').value, 10);
+        const selectedNonRes = document.getElementById('mixedUseNonRes').value;
+        
+        if (isNaN(gfa) || gfa <= 0) {
+          alert('Enter a valid gross floor area for the non-residential component.');
+          return;
+        }
+        if (isNaN(du) || du <= 0) {
+          alert('Enter a valid number of dwelling units for the residential component.');
+          return;
+        }
+        if (!selectedNonRes) {
+          alert('Select a non-residential use for the mixed-use development.');
+          return;
+        }
+
+        // Get the base ratio for the selected non-residential use
+        const nonResDemand = DEMAND_LEVELS[selectedNonRes];
+        const nonResBR = BASE_THRESHOLD_RATES[nonResDemand];
+        
+        // Calculate non-residential component
+        const nonResMul = getFloorMultiplier(gfa, ctx);
+        const nonResRawValue = nonResBR * nonResMul * (gfa / 1000);
+        const nonResFormula = `${nonResBR} × ${nonResMul.toFixed(3)} × `;
+        const nonResFormulaComplete = nonResFormula + `<span class="fraction"><span class="num">${gfa.toLocaleString()} sf</span><span class="den">1 000</span></span>`;
+
+        // Calculate residential component
+        const resBR = BASE_THRESHOLD_RATES['R'];
+        const resMul = RESIDENTIAL_MULTIPLIERS[ctx];
+        const resRawValue = resBR * resMul * du;
+        const resThreshold = Math.ceil(resRawValue);
+        
+        let resFormula = `${resBR} × ${resMul.toFixed(3)} × ${du}`;
+
+        // Calculate final non-residential threshold
+        const finalNonResThreshold = Math.ceil(nonResRawValue);
+
+        // Combine both components
+        threshold = finalNonResThreshold + resThreshold;
+        rawValue = nonResRawValue + resRawValue;
+        
+        formula = `${selectedNonRes}: (${nonResFormulaComplete} = ${finalNonResThreshold}) + Res: (${resFormula} = ${resThreshold})`;
+
+        // Minimum required is always 1 per unit
+        minReq = du;
+      }
+      // Regular Residential
+      else if (d === 'R') {
+        const du = parseInt(document.getElementById('dwellingUnits').value, 10);
+        
+        if (isNaN(du) || du <= 0) {
+          alert('Enter a valid number of dwelling units.');
+          return;
+        }
+
+        const br = BASE_THRESHOLD_RATES[d];
+        const mul = RESIDENTIAL_MULTIPLIERS[ctx];
+        rawValue = br * mul * du;
+        threshold = Math.ceil(rawValue);
+
+        formula = `${br} × ${mul.toFixed(3)} × ${du}`;
+
+        // Minimum required is always 1 per unit
+        minReq = du;
+      }
+      // Non-residential
+      else {
+        const gfa = parseFloat(document.getElementById('floorArea').value);
+        
+        if (isNaN(gfa) || gfa <= 0) {
+          alert('Enter a valid gross floor area.');
+          return;
+        }
+        
+        const br = BASE_THRESHOLD_RATES[d];
+        const mul = getFloorMultiplier(gfa, ctx);
+        rawValue = br * mul * (gfa / 1000);
+
+        formula = `${br} × ${mul.toFixed(3)} × `;
+        formula += `<span class="fraction"><span class="num">${gfa.toLocaleString()} sf</span><span class="den">1 000</span></span>`;
+
+        threshold = Math.ceil(rawValue);
+      }
+
+      // Show formula
+      const fdiv = document.getElementById('formula');
+      fdiv.innerHTML = `
+        <strong>Formula:</strong><br>
+        ${formula}<br>
+        ${rawValue !== threshold ? `Total = ${rawValue.toFixed(1)}<br>` : ''}
+        Threshold = ${threshold}
+      `;
+      fdiv.style.display = 'block';
+
+      // Store threshold globally for comparison function
+      currentThreshold = threshold;
+
+      // Show results
+      const rdiv = document.getElementById('results');
+      let minReqDisplay;
+      
+      if (d === 'R' || d === 'MIXED') {
+        minReqDisplay = minReq;
+      } else {
+        minReqDisplay = '0';
+      }
+      
+      rdiv.innerHTML = `
+        <p>Minimum Spaces Required: ${minReqDisplay}</p>
+        <p>Below or At Threshold: 1 – ${threshold} Spaces</p>
+        <p>Above Threshold: ${threshold + 1} Or Greater Spaces</p>
+      `;
+      rdiv.style.display = 'block';
+      
+      // Add landscaping input section
+      let existingInput = document.getElementById('desiredSpacesContainer');
+      if (!existingInput) {
+        // Create wrapper container
+        const landscapingWrapper = document.createElement('div');
+        landscapingWrapper.className = 'landscaping-inputs';
+        landscapingWrapper.id = 'landscapingWrapper';
+        
+        const title = document.createElement('h3');
+        title.textContent = 'Landscaping Requirements Calculator';
+        landscapingWrapper.appendChild(title);
+
+        const desiredInputDiv = document.createElement('div');
+        desiredInputDiv.className = 'input-row';
+        desiredInputDiv.id = 'desiredSpacesContainer';
+
+        const input = document.createElement('input');
+        input.type = 'number';
+        input.id = 'desiredSpaces';
+        input.placeholder = 'Enter Desired Parking Spaces';
+
+        const span = document.createElement('span');
+        span.className = 'info';
+        span.textContent = 'Spaces';
+
+        desiredInputDiv.appendChild(input);
+        desiredInputDiv.appendChild(span);
+
+        // Add comparison button
+        const buttonDiv = document.createElement('div');
+        buttonDiv.style.marginTop = '15px';
+        buttonDiv.style.textAlign = 'center';
+
+        const compareButton = document.createElement('button');
+        compareButton.textContent = 'Calculate Landscaping Requirements';
+        compareButton.style.padding = '10px 20px';
+        compareButton.style.fontSize = '16px';
+        compareButton.style.backgroundColor = '#007bff';
+        compareButton.style.color = 'white';
+        compareButton.style.border = 'none';
+        compareButton.style.borderRadius = '5px';
+        compareButton.style.cursor = 'pointer';
+        compareButton.style.fontFamily = 'Tahoma, sans-serif';
+        compareButton.onmouseover = function() { this.style.backgroundColor = '#0056b3'; };
+        compareButton.onmouseout = function() { this.style.backgroundColor = '#007bff'; };
+        compareButton.onclick = function () {
+          compareToThreshold();
+        };
+
+        buttonDiv.appendChild(compareButton);
+
+        landscapingWrapper.appendChild(desiredInputDiv);
+        landscapingWrapper.appendChild(buttonDiv);
+
+        // Insert wrapper after the results div
+        const resultsDiv = document.getElementById('results');
+        resultsDiv.insertAdjacentElement('afterend', landscapingWrapper);
+      }
+      
+      // Clear any existing comparison result when recalculating
+      const existingComparisonResult = document.getElementById('comparisonResult');
+      if (existingComparisonResult) {
+        existingComparisonResult.remove();
+      }
+      
+      const existingTreeCalculation = document.getElementById('treeCalculation');
+      if (existingTreeCalculation) {
+        existingTreeCalculation.remove();
+      }
+      
+      // If there's already a value in desired spaces, automatically update the comparison
+      const desiredSpacesInput = document.getElementById('desiredSpaces');
+      if (desiredSpacesInput && desiredSpacesInput.value) {
+        compareToThreshold();
+      }
+    }
+	  
+    function resetCalculator() {
+      document.getElementById('landUse').value = '';
+      document.getElementById('floorArea').value = '';
+      document.getElementById('dwellingUnits').value = '';
+      document.getElementById('mixedUseNonRes').value = '';
+      document.getElementById('luta').value = '';
+
+      document.getElementById('useInfo').textContent = '';
+      document.getElementById('lutaInfo').textContent = '';
+      document.getElementById('mixedUseInfo').textContent = '';
+
+      document.getElementById('floorAreaContainer').style.display = 'none';
+      document.getElementById('dwellingUnitsContainer').style.display = 'none';
+      document.getElementById('mixedUseNonResContainer').style.display = 'none';
+      document.getElementById('lutaContainer').style.display = 'none';
+
+      document.getElementById('formula').style.display = 'none';
+      document.getElementById('results').style.display = 'none';
+
+      const landscapingWrapper = document.getElementById('landscapingWrapper');
+      if (landscapingWrapper) landscapingWrapper.remove();
+
+      const comparisonResult = document.getElementById('comparisonResult');
+      if (comparisonResult) comparisonResult.remove();
+
+      const treeCalculationBox = document.getElementById('treeCalculation');
+      if (treeCalculationBox) treeCalculationBox.remove();
+
+      // Reset global threshold
+      currentThreshold = 0;
+
+      updateInfo();
+    }
+  </script>
+</body>
+</html>
