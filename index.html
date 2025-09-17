@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Draft Parking Threshold Calculator</title>
+  <title>OKC Draft Parking Threshold Calculator</title>
   <style>
     body {
       font-family: Tahoma, sans-serif;
@@ -160,10 +160,9 @@
       
       <optgroup label="RESIDENTIAL - HOUSING">
         <option value="Cottage Court">Cottage Court</option>
-        <option value="Detached Dwelling">Detached Dwelling</option>
+        <option value="Detached Dwelling">Detached Dwelling or Detached Dwelling Manufactured</option>
         <option value="Land Lease Community">Land Lease Community</option>
         <option value="Live-Work Dwelling">Live-Work Dwelling</option>
-        <option value="Manufactured Dwelling, Detached">Manufactured Dwelling, Detached</option>
         <option value="Mixed Uses and Dwellings">Mixed Uses and Dwellings</option>
         <option value="Multi-Dwelling">Multi-Dwelling</option>
         <option value="Three or Four Dwelling">Three or Four Dwelling</option>
@@ -176,13 +175,13 @@
         <option value="Group Home Facility">Group Home Facility</option>
         <option value="Group Residential">Group Residential</option>
         <option value="Re-Entry Facility">Re-Entry Facility</option>
-        <option value="Residential Facilities">Residential Facilities</option>
+        <option value="Residential Facilities">Residential Facilities for Children or Drug Treatment or Mental Health</option>
         <option value="Senior Independent Living">Senior Independent Living</option>
         <option value="Supportive Housing">Supportive Housing</option>
       </optgroup>
 
       <optgroup label="CIVIC">
-        <option value="Colleges or Universities">Colleges or Universities</option>
+        <option value="Colleges or Universities">College or University</option>
         <option value="Emergency or Homeless Shelter and Feeding Sites">Emergency or Homeless Shelter and Feeding Sites</option>
         <option value="Forced Detention and Correction Facilities">Forced Detention and Correction Facilities</option>
         <option value="Library Services and Community Centers">Library Services and Community Centers</option>
@@ -195,7 +194,6 @@
       </optgroup>
 
       <optgroup label="COMMERCIAL - ANIMAL SERVICES">
-        <option value="Animal Internment">Animal Internment</option>
         <option value="Horse Stable">Horse Stable</option>
         <option value="Kennel">Kennel</option>
         <option value="Livestock Auction">Livestock Auction</option>
@@ -203,8 +201,8 @@
 
       <optgroup label="COMMERCIAL - AUTOMOTIVE & EQUIPMENT">
         <option value="Automobile Vehicle Impound Yards and Damaged Vehicle Auctions and Sales">Automobile Vehicle Impound Yards and Damaged Vehicle Auctions and Sales</option>
-        <option value="Automobile and Vehicle Sales and Rental">Automobile and Vehicle Sales and Rental</option>
-        <option value="Cleaning and Repairs">Cleaning and Repairs</option>
+        <option value="Automobile and Vehicle Sales and Rental">Automobile Vehicle Sales and Rental</option>
+        <option value="Cleaning and Repairs">Cleaning and Repairs, Heavy Equipment or Light Equipment</option>
         <option value="Gasoline and Fueling Sales">Gasoline and Fueling Sales</option>
         <option value="Sales and Rentals, Farm and Heavy Vehicles and Equipment">Sales and Rentals, Farm and Heavy Vehicles and Equipment</option>
         <option value="Sales and Rentals, Manufactured (Mobile) Homes">Sales and Rentals, Manufactured (Mobile) Homes</option>
@@ -213,18 +211,18 @@
       </optgroup>
 
       <optgroup label="COMMERCIAL - DAY CARE">
-        <option value="Adult Daycare">Adult Daycare</option>
-        <option value="Childcare Centers">Childcare Centers</option>
+        <option value="Adult Daycare">Adult Day Care</option>
+        <option value="Childcare Centers">Child Care Centers</option>
         <option value="Family Day Care Homes">Family Day Care Homes</option>
       </optgroup>
 
       <optgroup label="COMMERCIAL - ENTERTAINMENT & LEISURE">
         <option value="Adult Entertainment">Adult Entertainment</option>
-        <option value="Drinking or Smoking Establishment">Drinking or Smoking Establishment</option>
-        <option value="Event Center">Event Center</option>
+        <option value="Drinking or Smoking Establishment">Drinking and Smoking Establishment</option>
+        <option value="Event Center">Event Center, General or Restricted</option>
         <option value="Participant Recreation">Participant Recreation</option>
         <option value="Spectator Sports / Performance Venue">Spectator Sports / Performance Venue</option>
-        <option value="Spectator Sports and Entertainment">Spectator Sports and Entertainment</option>
+        <option value="Spectator Sports and Entertainment">Spectator Sports and Entertainment, High Impact</option>
       </optgroup>
 
       <optgroup label="COMMERCIAL - FINANCIAL SERVICES">
@@ -237,11 +235,12 @@
         <option value="Food Service">Food Service</option>
         <option value="Food Truck Court">Food Truck Court</option>
         <option value="Grocery Store">Grocery Store</option>
-        <option value="Microbrewery/Distillery">Microbrewery/Distillery</option>
+        <option value="Microbrewery/Distillery">Micro Brewery/Distillery</option>
         <option value="Restaurant">Restaurant</option>
       </optgroup>
 
       <optgroup label="COMMERCIAL - FUNERAL & INTERMENT SERVICES">
+	    <option value="Animal Internment">Animal Interment</option>
         <option value="Cremating">Cremating</option>
         <option value="Interring">Interring</option>
         <option value="Undertaking">Undertaking</option>
@@ -271,8 +270,7 @@
         <option value="Repair Services Consumer">Repair Services Consumer</option>
       </optgroup>
 
-      <optgroup label="COMMERCIAL - RETAIL">
-        <option value="Adult Novelty Shop">Adult Novelty Shop</option>
+      <optgroup label="COMMERCIAL - RETAIL"
         <option value="Commercial Kiosk">Commercial Kiosk</option>
         <option value="Community Shopping Center">Community Shopping Center</option>
         <option value="Construction Sales and Services">Construction Sales and Services</option>
@@ -285,15 +283,15 @@
       </optgroup>
 
       <optgroup label="INDUSTRIAL">
-        <option value="Aboveground Flammable Liquid Storage">Aboveground Flammable Liquid Storage</option>
+        <option value="Aboveground Flammable Liquid Storage">Aboveground Flammable Storage</option>
         <option value="Custom Manufacturing">Custom Manufacturing</option>
         <option value="Hazardous Waste Disposal">Hazardous Waste Disposal</option>
-        <option value="Industrial">Industrial</option>
+        <option value="Industrial">Industrial, Low Moderate or Heavy Hazardous</option>
         <option value="Marijuana Processing">Marijuana Processing</option>
         <option value="Recycling Processing Facilities">Recycling Processing Facilities</option>
         <option value="Sanitary Landfill">Sanitary Landfill</option>
-        <option value="Warehouse">Warehouse</option>
-        <option value="Wholesaling Storage and Distribution">Wholesaling Storage and Distribution</option>
+        <option value="Warehouse">Warehouse Commercial</option>
+        <option value="Wholesaling Storage and Distribution">Wholesaling Storage and Distribution, General</option>
       </optgroup>
 
       <optgroup label="EXTRACTIVE">
@@ -306,8 +304,7 @@
         <option value="Agricultural Supplies and Services">Agricultural Supplies and Services</option>
         <option value="Animal Raising">Animal Raising</option>
         <option value="Animal Waste Processing">Animal Waste Processing</option>
-        <option value="Composting Facility and Accessory">Composting Facility and Accessory</option>
-        <option value="Composting Horticulture">Composting Horticulture</option>
+        <option value="Composting Facility and Accessory">Composting Facility</option>
         <option value="Horticulture">Horticulture</option>
         <option value="Stockyards">Stockyards</option>
       </optgroup>
@@ -325,9 +322,19 @@
   <div id="mixedUseNonResContainer" class="input-row" style="display: none;">
     <select id="mixedUseNonRes">
       <option value="">Select Non-Residential Use</option>
+	  
+	  <optgroup label="RESIDENTIAL - SUPPORT HOUSING">
+        <option value="Congregate Care / Nursing Home">Congregate Care / Nursing Home</option>
+        <option value="Group Home Facility">Group Home Facility</option>
+        <option value="Group Residential">Group Residential</option>
+        <option value="Re-Entry Facility">Re-Entry Facility</option>
+        <option value="Residential Facilities">Residential Facilities for Children or Drug Treatment or Mental Health</option>
+        <option value="Senior Independent Living">Senior Independent Living</option>
+        <option value="Supportive Housing">Supportive Housing</option>
+      </optgroup>
       
       <optgroup label="CIVIC">
-        <option value="Colleges or Universities">Colleges or Universities</option>
+        <option value="Colleges or Universities">College or University</option>
         <option value="Emergency or Homeless Shelter and Feeding Sites">Emergency or Homeless Shelter and Feeding Sites</option>
         <option value="Forced Detention and Correction Facilities">Forced Detention and Correction Facilities</option>
         <option value="Library Services and Community Centers">Library Services and Community Centers</option>
@@ -340,7 +347,6 @@
       </optgroup>
 
       <optgroup label="COMMERCIAL - ANIMAL SERVICES">
-        <option value="Animal Internment">Animal Internment</option>
         <option value="Horse Stable">Horse Stable</option>
         <option value="Kennel">Kennel</option>
         <option value="Livestock Auction">Livestock Auction</option>
@@ -348,8 +354,8 @@
 
       <optgroup label="COMMERCIAL - AUTOMOTIVE & EQUIPMENT">
         <option value="Automobile Vehicle Impound Yards and Damaged Vehicle Auctions and Sales">Automobile Vehicle Impound Yards and Damaged Vehicle Auctions and Sales</option>
-        <option value="Automobile and Vehicle Sales and Rental">Automobile and Vehicle Sales and Rental</option>
-        <option value="Cleaning and Repairs">Cleaning and Repairs</option>
+        <option value="Automobile and Vehicle Sales and Rental">Automobile Vehicle Sales and Rental</option>
+        <option value="Cleaning and Repairs">Cleaning and Repairs, Heavy Equipment or Light Equipment</option>
         <option value="Gasoline and Fueling Sales">Gasoline and Fueling Sales</option>
         <option value="Sales and Rentals, Farm and Heavy Vehicles and Equipment">Sales and Rentals, Farm and Heavy Vehicles and Equipment</option>
         <option value="Sales and Rentals, Manufactured (Mobile) Homes">Sales and Rentals, Manufactured (Mobile) Homes</option>
@@ -358,18 +364,18 @@
       </optgroup>
 
       <optgroup label="COMMERCIAL - DAY CARE">
-        <option value="Adult Daycare">Adult Daycare</option>
-        <option value="Childcare Centers">Childcare Centers</option>
+        <option value="Adult Daycare">Adult Day Care</option>
+        <option value="Childcare Centers">Child Care Centers</option>
         <option value="Family Day Care Homes">Family Day Care Homes</option>
       </optgroup>
 
       <optgroup label="COMMERCIAL - ENTERTAINMENT & LEISURE">
         <option value="Adult Entertainment">Adult Entertainment</option>
-        <option value="Drinking or Smoking Establishment">Drinking or Smoking Establishment</option>
-        <option value="Event Center">Event Center</option>
+        <option value="Drinking or Smoking Establishment">Drinking and Smoking Establishment</option>
+        <option value="Event Center">Event Center, General or Restricted</option>
         <option value="Participant Recreation">Participant Recreation</option>
         <option value="Spectator Sports / Performance Venue">Spectator Sports / Performance Venue</option>
-        <option value="Spectator Sports and Entertainment">Spectator Sports and Entertainment</option>
+        <option value="Spectator Sports and Entertainment">Spectator Sports and Entertainment, High Impact</option>
       </optgroup>
 
       <optgroup label="COMMERCIAL - FINANCIAL SERVICES">
@@ -382,11 +388,12 @@
         <option value="Food Service">Food Service</option>
         <option value="Food Truck Court">Food Truck Court</option>
         <option value="Grocery Store">Grocery Store</option>
-        <option value="Microbrewery/Distillery">Microbrewery/Distillery</option>
+        <option value="Microbrewery/Distillery">Micro Brewery/Distillery</option>
         <option value="Restaurant">Restaurant</option>
       </optgroup>
 
       <optgroup label="COMMERCIAL - FUNERAL & INTERMENT SERVICES">
+	    <option value="Animal Interment">Animal Interment</option>
         <option value="Cremating">Cremating</option>
         <option value="Interring">Interring</option>
         <option value="Undertaking">Undertaking</option>
@@ -417,7 +424,6 @@
       </optgroup>
 
       <optgroup label="COMMERCIAL - RETAIL">
-        <option value="Adult Novelty Shop">Adult Novelty Shop</option>
         <option value="Commercial Kiosk">Commercial Kiosk</option>
         <option value="Community Shopping Center">Community Shopping Center</option>
         <option value="Construction Sales and Services">Construction Sales and Services</option>
@@ -430,15 +436,15 @@
       </optgroup>
 
       <optgroup label="INDUSTRIAL">
-        <option value="Aboveground Flammable Liquid Storage">Aboveground Flammable Liquid Storage</option>
+        <option value="Aboveground Flammable Liquid Storage">Aboveground Flammable Storage</option>
         <option value="Custom Manufacturing">Custom Manufacturing</option>
         <option value="Hazardous Waste Disposal">Hazardous Waste Disposal</option>
-        <option value="Industrial">Industrial</option>
+        <option value="Industrial">Industrial, Low Moderate or Heavy Hazardous</option>
         <option value="Marijuana Processing">Marijuana Processing</option>
         <option value="Recycling Processing Facilities">Recycling Processing Facilities</option>
         <option value="Sanitary Landfill">Sanitary Landfill</option>
-        <option value="Warehouse">Warehouse</option>
-        <option value="Wholesaling Storage and Distribution">Wholesaling Storage and Distribution</option>
+        <option value="Warehouse">Warehouse Commercial</option>
+        <option value="Wholesaling Storage and Distribution">Wholesaling Storage and Distribution, General</option>
       </optgroup>
 
       <optgroup label="EXTRACTIVE">
@@ -451,8 +457,7 @@
         <option value="Agricultural Supplies and Services">Agricultural Supplies and Services</option>
         <option value="Animal Raising">Animal Raising</option>
         <option value="Animal Waste Processing">Animal Waste Processing</option>
-        <option value="Composting Facility and Accessory">Composting Facility and Accessory</option>
-        <option value="Composting Horticulture">Composting Horticulture</option>
+        <option value="Composting Facility and Accessory">Composting Facility</option>
         <option value="Horticulture">Horticulture</option>
         <option value="Stockyards">Stockyards</option>
       </optgroup>
@@ -678,7 +683,7 @@
         if (selectedNonRes) {
           const nonResDemand = DEMAND_LEVELS[selectedNonRes];
           const nonResBR = BASE_THRESHOLD_RATES[nonResDemand];
-          infoText = `Mixed Use: ${selectedNonRes} (${nonResBR}) + Residential (2)`;
+          infoText = `Base Ratio: ${selectedNonRes} (${nonResBR}) + Mixed Use Dwelling(s) (2)`;
         } else {
           infoText = 'Base Ratio: Select Non-Residential Use + Residential (2)';
         }
@@ -1110,7 +1115,6 @@
       }
       
       rdiv.innerHTML = `
-        <p>Minimum Spaces Required: ${minReqDisplay}</p>
         <p>Below or At Threshold: 1 – ${threshold} Spaces</p>
         <p>Above Threshold: ${threshold + 1} Or Greater Spaces</p>
       `;
@@ -1229,4 +1233,3 @@
   </script>
 </body>
 </html>
-
