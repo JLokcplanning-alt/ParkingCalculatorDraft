@@ -901,7 +901,7 @@
         // Calculate developed area
         const developedArea = totalSiteSize - parkingAreaSize;
         siteBreakdown.push(`Total Site Size: ${totalSiteSize.toLocaleString()} sq ft`);
-        siteBreakdown.push(`Parking Area: ${parkingAreaSize.toLocaleString()} sq ft (industry standard estimate is 350 sq ft per space)`);
+        siteBreakdown.push(`Parking Area: ${parkingAreaSize.toLocaleString()} sq ft)`);
         siteBreakdown.push(`Developed Area (Total Site Area - Parking): ${developedArea.toLocaleString()} sq ft`);
         
         // Calculate points (1 point per 200 sq ft of developed area)
@@ -1358,7 +1358,7 @@
         const parkingAreaInput = document.createElement('input');
         parkingAreaInput.type = 'number';
         parkingAreaInput.id = 'parkingAreaSize';
-        parkingAreaInput.placeholder = 'Enter Parking Area Size (optional) [industry standard estimate is 350 sq ft per space] ';
+        parkingAreaInput.placeholder = 'Enter Parking Area Size (optional)';
         
         const parkingAreaSpan = document.createElement('span');
         parkingAreaSpan.className = 'info';
@@ -1462,4 +1462,5 @@
   </script>
 </body>
 </html>
+
 
