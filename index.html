@@ -142,9 +142,6 @@
       color: #2c3e50;
       font-weight: 600;
     }
-
-
-
   </style>
 </head>
 <body>
@@ -393,7 +390,7 @@
       </optgroup>
 
       <optgroup label="COMMERCIAL - FUNERAL & INTERMENT SERVICES">
-	    <option value="Animal Interment">Animal Interment</option>
+	    <option value="Animal Internment">Animal Interment</option>
         <option value="Cremating">Cremating</option>
         <option value="Interring">Interring</option>
         <option value="Undertaking">Undertaking</option>
@@ -819,77 +816,88 @@
       return MULTIPLIERS[0][ctx];
     }
 
-    // Updated function to calculate actual number of trees based on new requirements
-    function calculateTreeCount(spaces, isAboveThreshold) {
-      let treeCount = 0;
+    // Updated function to calculate landscaping requirements with simplified point system
+    function calculateLandscapingPoints(spaces, isAboveThreshold) {
+      let pointsCount = 0;
       let breakdown = [];
       let designRequirements = [];
+      let treeCount = 0; // Still tracking internally for design requirements, but not shown in output
       
-      // Base minimum trees (1 or Greater)
+      // Base minimum points
       if (spaces >= 1) {
         if (isAboveThreshold) {
-          treeCount += 3;
-          breakdown.push("Base minimum: 3 trees");
+          pointsCount += 45;
+          breakdown.push("Base Minimum: 45 Points");
+          treeCount += 3; // internal tracking for design requirements
         } else {
-          treeCount += 2;
-          breakdown.push("Base minimum: 2 trees");
+          pointsCount += 30;
+          breakdown.push("Base Minimum: 30 Points");
+          treeCount += 2; // internal tracking for design requirements
         }
       }
       
-      // Additional trees per spaces (5 or Greater)
+      // Points per space
       if (spaces >= 5) {
-        let additionalTrees;
+        let additionalPoints;
+        
         if (isAboveThreshold) {
-          additionalTrees = Math.floor(spaces / 3);
-          breakdown.push(`Within parking area (1 per 3 spaces): ${additionalTrees} trees`);
+          // 5 points per space
+          additionalPoints = 5 * spaces;
+          breakdown.push(`Base Points Per Space (5 Per 1 Space): ${additionalPoints} Points`);
+          treeCount += Math.floor(spaces / 3); // internal tracking for design requirements
         } else {
-          additionalTrees = Math.floor(spaces / 5);
-          breakdown.push(`Within parking area (1 per 5 spaces): ${additionalTrees} trees`);
+          // 3 points per space
+          additionalPoints = 3 * spaces;
+          breakdown.push(`Base Points Per Space (3 Per 1 Space): ${additionalPoints} Points`);
+          treeCount += Math.floor(spaces / 5); // internal tracking for design requirements
         }
-        treeCount += additionalTrees;
+        
+        pointsCount += additionalPoints;
       }
       
-      // Additional trees for 150+ spaces (1 per 15 excess spaces)
+      // Additional points for 150+ spaces (1 per excess space)
       if (spaces >= 150) {
         let extraSpaces150 = spaces - 150;
-        let extraTrees150 = Math.floor(extraSpaces150 / 15);
-        breakdown.push(`Additional trees after 150 (1 per 15 excess spaces): ${extraTrees150} trees`);
-        treeCount += extraTrees150;
+        let extraPoints150 = extraSpaces150; // 1 point per excess space
+        
+        breakdown.push(`Additional Point Beyond 150 Spaces Per Space (1 Per 1 Space): ${extraPoints150} Points`);
+        pointsCount += extraPoints150;
+        treeCount += Math.floor(extraSpaces150 / 15); // internal tracking for design requirements
       }
       
-      // Additional trees for 750+ spaces (1 per 15 excess spaces)
+      // Additional points for 750+ spaces (1 per excess space)
       if (spaces >= 750) {
         let extraSpaces750 = spaces - 750;
-        let extraTrees750 = Math.floor(extraSpaces750 / 15);
-        breakdown.push(`Additional trees after 750 (1 per 15 excess spaces): ${extraTrees750} trees`);
-        treeCount += extraTrees750;
+        let extraPoints750 = extraSpaces750; // 1 point per excess space
+        
+        breakdown.push(`Additional Point Beyond 750 Spaces Per Space (1 Per 1 Space): ${extraPoints750} Points`);
+        pointsCount += extraPoints750;
+        treeCount += Math.floor(extraSpaces750 / 15); // internal tracking for design requirements
       }
       
-      // Additional trees for 1000+ spaces (1 per 1 excess space) - applies to both above and below threshold
+      // Additional points for 1000+ spaces (1 per excess space)
       if (spaces >= 1000) {
         let extraSpaces1000 = spaces - 1000;
-        let extraTrees1000 = extraSpaces1000; // 1 per 1 excess space
-        breakdown.push(`Additional trees after 1000 (1 per 1 excess space): ${extraTrees1000} trees`);
-        treeCount += extraTrees1000;
+        let extraPoints1000 = extraSpaces1000 * 15; // 1 point per excess space
+        
+        breakdown.push(`Additional Points Beyond 1000 Spaces Per Space (15 Per 1 Space): ${extraPoints1000} Points`);
+        pointsCount += extraPoints1000;
+        treeCount += extraSpaces1000; // internal tracking for design requirements
       }
       
-      // General Design Requirements
-      if (spaces >= 1) {
-        // Medium/large tree requirements
-        const mediumLargePercent = isAboveThreshold ? 30 : 20;
-        const mediumLargeTrees = Math.ceil(treeCount * (mediumLargePercent / 100));
-        designRequirements.push(`${mediumLargeTrees} tree(s) (${mediumLargePercent}% of total) shall be medium or large tree(s)`);
+      // Design requirements still based on tree equivalents (internal calculation)
+      if (spaces >= 6) {
         
         // Interior islands
         const islandSpacing = isAboveThreshold ? 6 : 10;
-        designRequirements.push(`Interior parking island every ${islandSpacing} spaces (minimum 1 tree each)`);
+        designRequirements.push(`Interior parking island every ${islandSpacing} spaces (minimum 1 tree in each interior island)`);
         
         // Landscape medians
         const medianSpacing = isAboveThreshold ? 4 : 6;
         designRequirements.push(`Landscape median every ${medianSpacing} rows of parking`);
         
         // Terminal islands
-        designRequirements.push("Terminal islands at ends of each parking row (minimum 2 trees each)");
+        designRequirements.push("Terminal islands at ends of each parking row (minimum 2 trees in each terminal island)");
         
         // 150+ spaces requirements
         if (spaces >= 150) {
@@ -904,7 +912,7 @@
       }
       
       return { 
-        total: treeCount, 
+        points: pointsCount,
         breakdown: breakdown,
         designRequirements: designRequirements
       };
@@ -920,8 +928,8 @@
 
       const isAboveThreshold = desired > currentThreshold;
       
-      // Calculate requirements
-      const treeCalc = calculateTreeCount(desired, isAboveThreshold);
+      // Calculate requirements with new point system
+      const landscapingCalc = calculateLandscapingPoints(desired, isAboveThreshold);
 
       // Remove any existing result boxes
       const existingComparisonResult = document.getElementById('comparisonResult');
@@ -965,13 +973,23 @@
       requirementsBox.style.border = '1px solid #e9ecef';
 
       let requirementsHTML = '<h4>Landscaping Requirements</h4>';
-      requirementsHTML += `<p><strong>Total Trees Required: ${treeCalc.total}</strong></p>`;
+      requirementsHTML += `<p><strong>Total Points Required: ${landscapingCalc.points}</strong></p>`;
+      
+      // Add calculation breakdown
+      if (landscapingCalc.breakdown && landscapingCalc.breakdown.length > 0) {
+        requirementsHTML += '<p><strong>Calculation:</strong></p>';
+        requirementsHTML += '<ul style="margin: 0; padding-left: 20px;">';
+        landscapingCalc.breakdown.forEach(item => {
+          requirementsHTML += `<li style="margin-bottom: 8px;">${item}</li>`;
+        });
+        requirementsHTML += '</ul>';
+      }
       
       // Add design requirements if any
-      if (treeCalc.designRequirements && treeCalc.designRequirements.length > 0) {
+      if (landscapingCalc.designRequirements && landscapingCalc.designRequirements.length > 0) {
         requirementsHTML += '<h4>General Design Requirements</h4>';
         requirementsHTML += '<ul style="margin: 0; padding-left: 20px;">';
-        treeCalc.designRequirements.forEach(req => {
+        landscapingCalc.designRequirements.forEach(req => {
           requirementsHTML += `<li style="margin-bottom: 8px;">${req}</li>`;
         });
         requirementsHTML += '</ul>';
@@ -1233,4 +1251,3 @@
   </script>
 </body>
 </html>
-
