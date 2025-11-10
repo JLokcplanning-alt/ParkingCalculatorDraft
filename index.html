@@ -162,6 +162,32 @@
       padding-top: 15px;
       border-top: 1px solid #ddd;
     }
+    
+    .toggle-container {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+    
+    .radio-option {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+    
+    .radio-option input[type="radio"] {
+      margin: 0;
+    }
+    
+    .note {
+      font-size: 12px;
+      font-style: italic;
+      color: #666;
+      margin-top: 5px;
+      margin-left: 25px;
+    }
   </style>
 </head>
 <body>
@@ -639,6 +665,9 @@
 
     // Global variable to store current threshold for comparison
     let currentThreshold = 0;
+    
+    // Industry standard sq ft per parking space
+    const STANDARD_PARKING_AREA = 350;
 
     // Auto-populate info fields
     document.getElementById('landUse').addEventListener('change', updateInfo);
@@ -747,6 +776,23 @@
       }
       document.getElementById('lutaInfo').textContent = mtxt;
     }
+    
+    // Function to handle toggle for parking area calculation
+    function toggleParkingAreaInput() {
+      const useStandardEstimate = document.getElementById('useStandardEstimate').checked;
+      const parkingAreaInput = document.getElementById('parkingAreaSize');
+      
+      if (useStandardEstimate) {
+        // Disable custom input when using standard estimate
+        parkingAreaInput.disabled = true;
+        parkingAreaInput.value = '';
+        parkingAreaInput.placeholder = 'Using standard estimate (350 sq ft per space)';
+      } else {
+        // Enable custom input when using custom value
+        parkingAreaInput.disabled = false;
+        parkingAreaInput.placeholder = 'Enter Parking Area Size (optional)';
+      }
+    }
 
     // Function to handle Parking Lot as Principal Use
     function showParkingLotCalculation() {
@@ -822,14 +868,60 @@
         totalSiteDiv.appendChild(totalSiteSpan);
         siteInputsDiv.appendChild(totalSiteDiv);
         
-        // Parking area size
+        // Parking area toggle options
+        const parkingAreaOptionsDiv = document.createElement('div');
+        parkingAreaOptionsDiv.className = 'toggle-container';
+        
+        // Industry standard option (radio)
+        const standardOptionLabel = document.createElement('label');
+        standardOptionLabel.className = 'radio-option';
+        
+        const standardOptionInput = document.createElement('input');
+        standardOptionInput.type = 'radio';
+        standardOptionInput.id = 'useStandardEstimate';
+        standardOptionInput.name = 'parkingAreaMethod';
+        standardOptionInput.checked = true; // Default checked
+        standardOptionInput.onchange = toggleParkingAreaInput;
+        
+        const standardOptionText = document.createTextNode('Estimate Using Industry Standard (300 sq ft per space)');
+        
+        standardOptionLabel.appendChild(standardOptionInput);
+        standardOptionLabel.appendChild(standardOptionText);
+        parkingAreaOptionsDiv.appendChild(standardOptionLabel);
+        
+        // Note about standard calculation
+        const standardNote = document.createElement('div');
+        standardNote.className = 'note';
+        standardNote.textContent = 'Spaces × 300 sq ft (includes drive aisles, etc.)';
+        parkingAreaOptionsDiv.appendChild(standardNote);
+        
+        // Custom value option (radio)
+        const customOptionLabel = document.createElement('label');
+        customOptionLabel.className = 'radio-option';
+        
+        const customOptionInput = document.createElement('input');
+        customOptionInput.type = 'radio';
+        customOptionInput.id = 'useCustomValue';
+        customOptionInput.name = 'parkingAreaMethod';
+        customOptionInput.onchange = toggleParkingAreaInput;
+        
+        const customOptionText = document.createTextNode('Enter Custom Value');
+        
+        customOptionLabel.appendChild(customOptionInput);
+        customOptionLabel.appendChild(customOptionText);
+        parkingAreaOptionsDiv.appendChild(customOptionLabel);
+        
+        siteInputsDiv.appendChild(parkingAreaOptionsDiv);
+        
+        // Parking area size input
         const parkingAreaDiv = document.createElement('div');
         parkingAreaDiv.className = 'input-row';
         
         const parkingAreaInput = document.createElement('input');
         parkingAreaInput.type = 'number';
         parkingAreaInput.id = 'parkingAreaSize';
-        parkingAreaInput.placeholder = 'Enter Parking Area Size (optional)';
+        parkingAreaInput.placeholder = 'Using standard estimate (300 sq ft per space)';
+        parkingAreaInput.disabled = true; // Disabled by default since standard estimate is selected
         
         const parkingAreaSpan = document.createElement('span');
         parkingAreaSpan.className = 'info';
@@ -883,26 +975,41 @@
     }
 
     // Function to calculate site-based points
-    function calculateSitePoints(totalSiteSize, parkingAreaSize) {
+    function calculateSitePoints(totalSiteSize, parkingAreaSize, spaces) {
       let siteBreakdown = [];
       let sitePoints = 0;
       
-      // Check if both site inputs are provided
-      if (!isNaN(totalSiteSize) && !isNaN(parkingAreaSize) && totalSiteSize > 0 && parkingAreaSize > 0) {
+      // Get the actual parking area size (either from input or calculated with standard estimate)
+      let actualParkingAreaSize = parkingAreaSize;
+      const useStandardEstimate = document.getElementById('useStandardEstimate') && document.getElementById('useStandardEstimate').checked;
+      
+      if (useStandardEstimate && spaces > 0) {
+        actualParkingAreaSize = spaces * STANDARD_PARKING_AREA;
+        siteBreakdown.push(`Using industry standard: ${spaces} spaces × ${STANDARD_PARKING_AREA} sq ft = ${actualParkingAreaSize.toLocaleString()} sq ft`);
+      }
+      
+      // Check if both site inputs are provided (or calculated)
+      if (!isNaN(totalSiteSize) && totalSiteSize > 0 && !isNaN(actualParkingAreaSize) && actualParkingAreaSize > 0) {
         // Ensure parking area doesn't exceed total site
-        if (parkingAreaSize > totalSiteSize) {
+        if (actualParkingAreaSize > totalSiteSize) {
           return { 
             points: 0, 
             breakdown: ["Error: Parking area cannot be larger than total site size"],
-            valid: false
+            valid: false,
+            useStandardEstimate: useStandardEstimate,
+            actualParkingAreaSize: actualParkingAreaSize
           };
         }
         
         // Calculate developed area
-        const developedArea = totalSiteSize - parkingAreaSize;
+        const developedArea = totalSiteSize - actualParkingAreaSize;
         siteBreakdown.push(`Total Site Size: ${totalSiteSize.toLocaleString()} sq ft`);
-        siteBreakdown.push(`Parking Area: ${parkingAreaSize.toLocaleString()} sq ft)`);
-        siteBreakdown.push(`Developed Area (Total Site Area - Parking): ${developedArea.toLocaleString()} sq ft`);
+        
+        if (!useStandardEstimate) {
+          siteBreakdown.push(`Parking Area: ${actualParkingAreaSize.toLocaleString()} sq ft`);
+        }
+        
+        siteBreakdown.push(`Developed Area (Total - Parking): ${developedArea.toLocaleString()} sq ft`);
         
         // Calculate points (1 point per 200 sq ft of developed area)
         sitePoints = Math.ceil(developedArea / 200);
@@ -911,14 +1018,18 @@
         return {
           points: sitePoints,
           breakdown: siteBreakdown,
-          valid: true
+          valid: true,
+          useStandardEstimate: useStandardEstimate,
+          actualParkingAreaSize: actualParkingAreaSize
         };
       }
       
       return {
         points: 0,
         breakdown: [],
-        valid: false
+        valid: false,
+        useStandardEstimate: useStandardEstimate,
+        actualParkingAreaSize: actualParkingAreaSize
       };
     }
 
@@ -1042,7 +1153,7 @@
       const parkingAreaSize = parseFloat(document.getElementById('parkingAreaSize').value);
       
       // Calculate site points if inputs are provided
-      const siteCalc = calculateSitePoints(totalSiteSize, parkingAreaSize);
+      const siteCalc = calculateSitePoints(totalSiteSize, parkingAreaSize, desired);
       
       // Remove any existing result boxes
       const existingComparisonResult = document.getElementById('comparisonResult');
@@ -1116,9 +1227,9 @@
       
       requirementsBox.innerHTML = requirementsHTML;
       
-      // Add site area calculation box if inputs were provided
+      // Add site area calculation box if total site size is provided
       let siteBox = null;
-      if (siteCalc.breakdown && siteCalc.breakdown.length > 0) {
+      if (!isNaN(totalSiteSize) && totalSiteSize > 0) {
         siteBox = document.createElement('div');
         siteBox.id = 'siteCalculation';
         siteBox.style.marginTop = '20px';
@@ -1129,25 +1240,31 @@
         
         let siteHTML = '<h4>Developed Area Landscaping Requirements</h4>';
         
-        if (!siteCalc.valid) {
-          siteHTML += `<p><strong>${siteCalc.breakdown[0]}</strong></p>`;
+        // Check if we have valid input for parking area (either custom or can be calculated)
+        if (siteCalc.useStandardEstimate || (!isNaN(parkingAreaSize) && parkingAreaSize > 0)) {
+          if (!siteCalc.valid) {
+            siteHTML += `<p><strong>${siteCalc.breakdown[0]}</strong></p>`;
+          } else {
+            siteHTML += `<p><strong>Developed Area Points Required: ${siteCalc.points}</strong></p>`;
+            
+            // Add calculation breakdown
+            if (siteCalc.breakdown.length > 0) {
+              siteHTML += '<p><strong>Calculation:</strong></p>';
+              siteHTML += '<ul style="margin: 0; padding-left: 20px;">';
+              siteCalc.breakdown.forEach(item => {
+                siteHTML += `<li style="margin-bottom: 8px;">${item}</li>`;
+              });
+              siteHTML += '</ul>';
+            }
+            
+            // Add total points if calculation is valid
+            if (siteCalc.valid) {
+              siteHTML += `<p class="total-points">Total Site Landscaping Points: ${landscapingCalc.points + siteCalc.points} (Parking: ${landscapingCalc.points} + Developed Area: ${siteCalc.points})</p>`;
+            }
+          }
         } else {
-          siteHTML += `<p><strong>Developed Area Points Required: ${siteCalc.points}</strong></p>`;
-          
-          // Add calculation breakdown
-          if (siteCalc.breakdown.length > 0) {
-            siteHTML += '<p><strong>Calculation:</strong></p>';
-            siteHTML += '<ul style="margin: 0; padding-left: 20px;">';
-            siteCalc.breakdown.forEach(item => {
-              siteHTML += `<li style="margin-bottom: 8px;">${item}</li>`;
-            });
-            siteHTML += '</ul>';
-          }
-          
-          // Add total points if calculation is valid
-          if (siteCalc.valid) {
-            siteHTML += `<p class="total-points">Total Site Landscaping Points: ${landscapingCalc.points + siteCalc.points} (Parking: ${landscapingCalc.points} + Developed Area: ${siteCalc.points})</p>`;
-          }
+          // Message if total site is provided but parking area isn't
+          siteHTML += `<p>Please provide parking area size or use the industry standard estimate to calculate developed area points.</p>`;
         }
         
         siteBox.innerHTML = siteHTML;
@@ -1331,7 +1448,7 @@
         siteInputsDiv.className = 'site-inputs';
         
         const siteInputsTitle = document.createElement('h4');
-        siteInputsTitle.textContent = 'Optional Site Area Calculations';
+        siteInputsTitle.textContent = 'Optional Site Landscaping, Generally + Parking Total Calculation';
         siteInputsDiv.appendChild(siteInputsTitle);
         
         // Total site size
@@ -1341,7 +1458,7 @@
         const totalSiteInput = document.createElement('input');
         totalSiteInput.type = 'number';
         totalSiteInput.id = 'totalSiteSize';
-        totalSiteInput.placeholder = 'Enter Total Site Size (optional)';
+        totalSiteInput.placeholder = 'Enter Total Site Size';
         
         const totalSiteSpan = document.createElement('span');
         totalSiteSpan.className = 'info';
@@ -1351,14 +1468,60 @@
         totalSiteDiv.appendChild(totalSiteSpan);
         siteInputsDiv.appendChild(totalSiteDiv);
         
-        // Parking area size
+        // Parking area toggle options
+        const parkingAreaOptionsDiv = document.createElement('div');
+        parkingAreaOptionsDiv.className = 'toggle-container';
+        
+        // Industry standard option (radio)
+        const standardOptionLabel = document.createElement('label');
+        standardOptionLabel.className = 'radio-option';
+        
+        const standardOptionInput = document.createElement('input');
+        standardOptionInput.type = 'radio';
+        standardOptionInput.id = 'useStandardEstimate';
+        standardOptionInput.name = 'parkingAreaMethod';
+        standardOptionInput.checked = true; // Default checked
+        standardOptionInput.onchange = toggleParkingAreaInput;
+        
+        const standardOptionText = document.createTextNode('Use Estimated Parking Size Value');
+        
+        standardOptionLabel.appendChild(standardOptionInput);
+        standardOptionLabel.appendChild(standardOptionText);
+        parkingAreaOptionsDiv.appendChild(standardOptionLabel);
+        
+        // Note about standard calculation
+        const standardNote = document.createElement('div');
+        standardNote.className = 'note';
+        standardNote.textContent = ' Industry Standard Estimate: Spaces × 300 sq ft (includes drive aisles, etc.)';
+        parkingAreaOptionsDiv.appendChild(standardNote);
+        
+        // Custom value option (radio)
+        const customOptionLabel = document.createElement('label');
+        customOptionLabel.className = 'radio-option';
+        
+        const customOptionInput = document.createElement('input');
+        customOptionInput.type = 'radio';
+        customOptionInput.id = 'useCustomValue';
+        customOptionInput.name = 'parkingAreaMethod';
+        customOptionInput.onchange = toggleParkingAreaInput;
+        
+        const customOptionText = document.createTextNode('Use Actual Parking Size Value');
+        
+        customOptionLabel.appendChild(customOptionInput);
+        customOptionLabel.appendChild(customOptionText);
+        parkingAreaOptionsDiv.appendChild(customOptionLabel);
+        
+        siteInputsDiv.appendChild(parkingAreaOptionsDiv);
+        
+        // Parking area size input
         const parkingAreaDiv = document.createElement('div');
         parkingAreaDiv.className = 'input-row';
         
         const parkingAreaInput = document.createElement('input');
         parkingAreaInput.type = 'number';
         parkingAreaInput.id = 'parkingAreaSize';
-        parkingAreaInput.placeholder = 'Enter Parking Area Size (optional)';
+        parkingAreaInput.placeholder = 'Using standard estimate (350 sq ft per space)';
+        parkingAreaInput.disabled = true; // Disabled by default since standard estimate is selected
         
         const parkingAreaSpan = document.createElement('span');
         parkingAreaSpan.className = 'info';
@@ -1462,5 +1625,3 @@
   </script>
 </body>
 </html>
-
-
