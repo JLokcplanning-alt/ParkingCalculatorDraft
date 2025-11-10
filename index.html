@@ -111,7 +111,7 @@
       font-weight: 600;
     }
     
-    #comparisonResult, #treeCalculation {
+    #comparisonResult, #treeCalculation, #siteCalculation {
       margin-top: 20px;
       padding: 20px;
       border-radius: 8px;
@@ -119,12 +119,12 @@
       border: 1px solid #e9ecef;
     }
     
-    #treeCalculation h4 {
+    #treeCalculation h4, #siteCalculation h4 {
       margin: 0 0 15px 0;
       color: #2c3e50;
     }
     
-    #treeCalculation p {
+    #treeCalculation p, #siteCalculation p {
       margin: 10px 0;
     }
     
@@ -141,6 +141,26 @@
       text-align: center;
       color: #2c3e50;
       font-weight: 600;
+    }
+
+    .site-inputs {
+      margin-top: 15px;
+      padding-top: 15px;
+      border-top: 1px dashed #ddd;
+    }
+
+    .site-inputs h4 {
+      margin: 0 0 15px 0;
+      text-align: center;
+      color: #2c3e50;
+    }
+
+    .total-points {
+      font-weight: bold;
+      font-size: 18px;
+      margin-top: 15px;
+      padding-top: 15px;
+      border-top: 1px solid #ddd;
     }
   </style>
 </head>
@@ -743,6 +763,9 @@
       const existingTreeCalculation = document.getElementById('treeCalculation');
       if (existingTreeCalculation) existingTreeCalculation.remove();
 
+      const existingSiteCalculation = document.getElementById('siteCalculation');
+      if (existingSiteCalculation) existingSiteCalculation.remove();
+
       // Set global threshold to 0 so any number of spaces will be "above threshold"
       currentThreshold = 0;
 
@@ -774,6 +797,48 @@
         desiredInputDiv.appendChild(input);
         desiredInputDiv.appendChild(span);
 
+        // Site area inputs (optional)
+        const siteInputsDiv = document.createElement('div');
+        siteInputsDiv.className = 'site-inputs';
+        
+        const siteInputsTitle = document.createElement('h4');
+        siteInputsTitle.textContent = 'Optional Site Area Calculations';
+        siteInputsDiv.appendChild(siteInputsTitle);
+        
+        // Total site size
+        const totalSiteDiv = document.createElement('div');
+        totalSiteDiv.className = 'input-row';
+        
+        const totalSiteInput = document.createElement('input');
+        totalSiteInput.type = 'number';
+        totalSiteInput.id = 'totalSiteSize';
+        totalSiteInput.placeholder = 'Enter Total Site Size (optional)';
+        
+        const totalSiteSpan = document.createElement('span');
+        totalSiteSpan.className = 'info';
+        totalSiteSpan.textContent = 'Sq Ft';
+        
+        totalSiteDiv.appendChild(totalSiteInput);
+        totalSiteDiv.appendChild(totalSiteSpan);
+        siteInputsDiv.appendChild(totalSiteDiv);
+        
+        // Parking area size
+        const parkingAreaDiv = document.createElement('div');
+        parkingAreaDiv.className = 'input-row';
+        
+        const parkingAreaInput = document.createElement('input');
+        parkingAreaInput.type = 'number';
+        parkingAreaInput.id = 'parkingAreaSize';
+        parkingAreaInput.placeholder = 'Enter Parking Area Size (optional)';
+        
+        const parkingAreaSpan = document.createElement('span');
+        parkingAreaSpan.className = 'info';
+        parkingAreaSpan.textContent = 'Sq Ft';
+        
+        parkingAreaDiv.appendChild(parkingAreaInput);
+        parkingAreaDiv.appendChild(parkingAreaSpan);
+        siteInputsDiv.appendChild(parkingAreaDiv);
+
         // Add calculation button
         const buttonDiv = document.createElement('div');
         buttonDiv.style.marginTop = '15px';
@@ -798,6 +863,7 @@
         buttonDiv.appendChild(compareButton);
 
         landscapingWrapperNew.appendChild(desiredInputDiv);
+        landscapingWrapperNew.appendChild(siteInputsDiv);
         landscapingWrapperNew.appendChild(buttonDiv);
 
         // Insert after the land use selection
@@ -814,6 +880,46 @@
         }
       }
       return MULTIPLIERS[0][ctx];
+    }
+
+    // Function to calculate site-based points
+    function calculateSitePoints(totalSiteSize, parkingAreaSize) {
+      let siteBreakdown = [];
+      let sitePoints = 0;
+      
+      // Check if both site inputs are provided
+      if (!isNaN(totalSiteSize) && !isNaN(parkingAreaSize) && totalSiteSize > 0 && parkingAreaSize > 0) {
+        // Ensure parking area doesn't exceed total site
+        if (parkingAreaSize > totalSiteSize) {
+          return { 
+            points: 0, 
+            breakdown: ["Error: Parking area cannot be larger than total site size"],
+            valid: false
+          };
+        }
+        
+        // Calculate developed area
+        const developedArea = totalSiteSize - parkingAreaSize;
+        siteBreakdown.push(`Total Site Size: ${totalSiteSize.toLocaleString()} sq ft`);
+        siteBreakdown.push(`Parking Area: ${parkingAreaSize.toLocaleString()} sq ft (industry standard estimate is 350 sq ft per space)`);
+        siteBreakdown.push(`Developed Area (Total Site Area - Parking): ${developedArea.toLocaleString()} sq ft`);
+        
+        // Calculate points (1 point per 200 sq ft of developed area)
+        sitePoints = Math.ceil(developedArea / 200);
+        siteBreakdown.push(`Developed Area Points (1 per 200 sq ft): ${sitePoints} Points`);
+        
+        return {
+          points: sitePoints,
+          breakdown: siteBreakdown,
+          valid: true
+        };
+      }
+      
+      return {
+        points: 0,
+        breakdown: [],
+        valid: false
+      };
     }
 
     // Updated function to calculate landscaping requirements with simplified point system
@@ -860,7 +966,7 @@
         let extraSpaces150 = spaces - 150;
         let extraPoints150 = extraSpaces150; // 1 point per excess space
         
-        breakdown.push(`Additional Point Beyond 150 Spaces Per Space (1 Per 1 Space): ${extraPoints150} Points`);
+        breakdown.push(`Spaces Over 150: Add 1 Point Per Additional Space = ${extraPoints150} Points`);
         pointsCount += extraPoints150;
         treeCount += Math.floor(extraSpaces150 / 15); // internal tracking for design requirements
       }
@@ -870,17 +976,17 @@
         let extraSpaces750 = spaces - 750;
         let extraPoints750 = extraSpaces750; // 1 point per excess space
         
-        breakdown.push(`Additional Point Beyond 750 Spaces Per Space (1 Per 1 Space): ${extraPoints750} Points`);
+        breakdown.push(`Spaces Over 750: Add 1 Point Per Additional Space = ${extraPoints750} Points`);
         pointsCount += extraPoints750;
         treeCount += Math.floor(extraSpaces750 / 15); // internal tracking for design requirements
       }
       
-      // Additional points for 1000+ spaces (1 per excess space)
+      // Additional points for 1000+ spaces (15 per excess space)
       if (spaces >= 1000) {
         let extraSpaces1000 = spaces - 1000;
-        let extraPoints1000 = extraSpaces1000 * 15; // 1 point per excess space
+        let extraPoints1000 = extraSpaces1000 * 15; // 15 points per excess space
         
-        breakdown.push(`Additional Points Beyond 1000 Spaces Per Space (15 Per 1 Space): ${extraPoints1000} Points`);
+        breakdown.push(`Spaces Over 1000: 15 Points Per Additional Space = ${extraPoints1000} Points`);
         pointsCount += extraPoints1000;
         treeCount += extraSpaces1000; // internal tracking for design requirements
       }
@@ -928,17 +1034,30 @@
 
       const isAboveThreshold = desired > currentThreshold;
       
-      // Calculate requirements with new point system
+      // Calculate parking requirements
       const landscapingCalc = calculateLandscapingPoints(desired, isAboveThreshold);
-
+      
+      // Get site inputs
+      const totalSiteSize = parseFloat(document.getElementById('totalSiteSize').value);
+      const parkingAreaSize = parseFloat(document.getElementById('parkingAreaSize').value);
+      
+      // Calculate site points if inputs are provided
+      const siteCalc = calculateSitePoints(totalSiteSize, parkingAreaSize);
+      
       // Remove any existing result boxes
       const existingComparisonResult = document.getElementById('comparisonResult');
       if (existingComparisonResult) {
         existingComparisonResult.remove();
       }
+      
       const existingTreeCalculation = document.getElementById('treeCalculation');
       if (existingTreeCalculation) {
         existingTreeCalculation.remove();
+      }
+      
+      const existingSiteCalculation = document.getElementById('siteCalculation');
+      if (existingSiteCalculation) {
+        existingSiteCalculation.remove();
       }
 
       const landscapingWrapper = document.getElementById('landscapingWrapper');
@@ -963,7 +1082,7 @@
       }
       statusBox.innerHTML = statusMessage;
 
-      // Create requirements box
+      // Create parking requirements box
       const requirementsBox = document.createElement('div');
       requirementsBox.id = 'treeCalculation';
       requirementsBox.style.marginTop = '20px';
@@ -972,8 +1091,8 @@
       requirementsBox.style.background = '#f8f9fa';
       requirementsBox.style.border = '1px solid #e9ecef';
 
-      let requirementsHTML = '<h4>Landscaping Requirements</h4>';
-      requirementsHTML += `<p><strong>Total Points Required: ${landscapingCalc.points}</strong></p>`;
+      let requirementsHTML = '<h4>Parking Area Landscaping Requirements</h4>';
+      requirementsHTML += `<p><strong>Parking Area Points Required: ${landscapingCalc.points}</strong></p>`;
       
       // Add calculation breakdown
       if (landscapingCalc.breakdown && landscapingCalc.breakdown.length > 0) {
@@ -994,12 +1113,53 @@
         });
         requirementsHTML += '</ul>';
       }
-
+      
       requirementsBox.innerHTML = requirementsHTML;
+      
+      // Add site area calculation box if inputs were provided
+      let siteBox = null;
+      if (siteCalc.breakdown && siteCalc.breakdown.length > 0) {
+        siteBox = document.createElement('div');
+        siteBox.id = 'siteCalculation';
+        siteBox.style.marginTop = '20px';
+        siteBox.style.padding = '20px';
+        siteBox.style.borderRadius = '8px';
+        siteBox.style.background = '#f8f9fa';
+        siteBox.style.border = '1px solid #e9ecef';
+        
+        let siteHTML = '<h4>Developed Area Landscaping Requirements</h4>';
+        
+        if (!siteCalc.valid) {
+          siteHTML += `<p><strong>${siteCalc.breakdown[0]}</strong></p>`;
+        } else {
+          siteHTML += `<p><strong>Developed Area Points Required: ${siteCalc.points}</strong></p>`;
+          
+          // Add calculation breakdown
+          if (siteCalc.breakdown.length > 0) {
+            siteHTML += '<p><strong>Calculation:</strong></p>';
+            siteHTML += '<ul style="margin: 0; padding-left: 20px;">';
+            siteCalc.breakdown.forEach(item => {
+              siteHTML += `<li style="margin-bottom: 8px;">${item}</li>`;
+            });
+            siteHTML += '</ul>';
+          }
+          
+          // Add total points if calculation is valid
+          if (siteCalc.valid) {
+            siteHTML += `<p class="total-points">Total Site Landscaping Points: ${landscapingCalc.points + siteCalc.points} (Parking: ${landscapingCalc.points} + Developed Area: ${siteCalc.points})</p>`;
+          }
+        }
+        
+        siteBox.innerHTML = siteHTML;
+      }
 
       // Add boxes to page
       landscapingWrapper.insertAdjacentElement('afterend', statusBox);
       statusBox.insertAdjacentElement('afterend', requirementsBox);
+      
+      if (siteBox) {
+        requirementsBox.insertAdjacentElement('afterend', siteBox);
+      }
     }
 
     // Main calculation and formula display
@@ -1166,6 +1326,48 @@
         desiredInputDiv.appendChild(input);
         desiredInputDiv.appendChild(span);
 
+        // Site area inputs (optional)
+        const siteInputsDiv = document.createElement('div');
+        siteInputsDiv.className = 'site-inputs';
+        
+        const siteInputsTitle = document.createElement('h4');
+        siteInputsTitle.textContent = 'Optional Site Area Calculations';
+        siteInputsDiv.appendChild(siteInputsTitle);
+        
+        // Total site size
+        const totalSiteDiv = document.createElement('div');
+        totalSiteDiv.className = 'input-row';
+        
+        const totalSiteInput = document.createElement('input');
+        totalSiteInput.type = 'number';
+        totalSiteInput.id = 'totalSiteSize';
+        totalSiteInput.placeholder = 'Enter Total Site Size (optional)';
+        
+        const totalSiteSpan = document.createElement('span');
+        totalSiteSpan.className = 'info';
+        totalSiteSpan.textContent = 'Sq Ft';
+        
+        totalSiteDiv.appendChild(totalSiteInput);
+        totalSiteDiv.appendChild(totalSiteSpan);
+        siteInputsDiv.appendChild(totalSiteDiv);
+        
+        // Parking area size
+        const parkingAreaDiv = document.createElement('div');
+        parkingAreaDiv.className = 'input-row';
+        
+        const parkingAreaInput = document.createElement('input');
+        parkingAreaInput.type = 'number';
+        parkingAreaInput.id = 'parkingAreaSize';
+        parkingAreaInput.placeholder = 'Enter Parking Area Size (optional)';
+        
+        const parkingAreaSpan = document.createElement('span');
+        parkingAreaSpan.className = 'info';
+        parkingAreaSpan.textContent = 'Sq Ft';
+        
+        parkingAreaDiv.appendChild(parkingAreaInput);
+        parkingAreaDiv.appendChild(parkingAreaSpan);
+        siteInputsDiv.appendChild(parkingAreaDiv);
+
         // Add comparison button
         const buttonDiv = document.createElement('div');
         buttonDiv.style.marginTop = '15px';
@@ -1190,6 +1392,7 @@
         buttonDiv.appendChild(compareButton);
 
         landscapingWrapper.appendChild(desiredInputDiv);
+        landscapingWrapper.appendChild(siteInputsDiv);
         landscapingWrapper.appendChild(buttonDiv);
 
         // Insert wrapper after the results div
@@ -1206,6 +1409,11 @@
       const existingTreeCalculation = document.getElementById('treeCalculation');
       if (existingTreeCalculation) {
         existingTreeCalculation.remove();
+      }
+      
+      const existingSiteCalculation = document.getElementById('siteCalculation');
+      if (existingSiteCalculation) {
+        existingSiteCalculation.remove();
       }
       
       // If there's already a value in desired spaces, automatically update the comparison
@@ -1242,6 +1450,9 @@
 
       const treeCalculationBox = document.getElementById('treeCalculation');
       if (treeCalculationBox) treeCalculationBox.remove();
+      
+      const siteCalculationBox = document.getElementById('siteCalculation');
+      if (siteCalculationBox) siteCalculationBox.remove();
 
       // Reset global threshold
       currentThreshold = 0;
