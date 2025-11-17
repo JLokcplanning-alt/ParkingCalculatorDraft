@@ -908,7 +908,7 @@
       let sitePoints = 0;
       
       // Check if total site size is provided
-      if (!isNaN(totalSiteSize) && totalSiteSize > 0 && !isNaN(spaces) && spaces > 0) {
+      if (!isNaN(totalSiteSize) && totalSiteSize > 0 && !isNaN(spaces) && spaces >= 0) {
         // Automatically calculate parking area using the formula
         const actualParkingAreaSize = spaces * STANDARD_PARKING_AREA;
         
@@ -916,11 +916,8 @@
         
         // Ensure parking area doesn't exceed total site
         if (actualParkingAreaSize > totalSiteSize) {
-          return { 
-            points: 0, 
-            breakdown: ["Error: Calculated parking area is larger than total site size. Please check your inputs."],
-            valid: false,
-            actualParkingAreaSize: actualParkingAreaSize
+			actualParkingAreaSize = totalSiteSize;
+			siteBreakdown[0] = `Parking Area (${spaces} spaces × ${STANDARD_PARKING_AREA} sq ft, capped at site size): ${actualParkingAreaSize.toLocaleString()} sq ft`;
           };
         }
         
@@ -1479,4 +1476,5 @@
   </script>
 </body>
 </html>
+
 
