@@ -910,7 +910,7 @@
       // Check if total site size is provided
       if (!isNaN(totalSiteSize) && totalSiteSize > 0 && !isNaN(spaces) && spaces >= 0) {
         // Automatically calculate parking area using the formula
-        const actualParkingAreaSize = spaces * STANDARD_PARKING_AREA;
+        let actualParkingAreaSize = spaces * STANDARD_PARKING_AREA;
         
         siteBreakdown.push(`Parking Area (${spaces} spaces × ${STANDARD_PARKING_AREA} sq ft): ${actualParkingAreaSize.toLocaleString()} sq ft`);
         
@@ -918,7 +918,6 @@
         if (actualParkingAreaSize > totalSiteSize) {
 			actualParkingAreaSize = totalSiteSize;
 			siteBreakdown[0] = `Parking Area (${spaces} spaces × ${STANDARD_PARKING_AREA} sq ft, capped at site size): ${actualParkingAreaSize.toLocaleString()} sq ft`;
-          };
         }
         
         // Calculate developed area
@@ -1476,6 +1475,7 @@
   </script>
 </body>
 </html>
+
 
 
 
