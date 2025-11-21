@@ -669,6 +669,17 @@
     // Industry standard sq ft per parking space (includes drive aisles, etc.)
     const STANDARD_PARKING_AREA = 300;
 
+    // Function to identify small residential uses that only use parking area points
+    function isSmallResidentialUse(landUse) {
+      const smallResUses = [
+        "Detached Dwelling",
+        "Two-Dwelling", 
+        "Three or Four Dwelling",
+        "Land Lease Community"
+      ];
+      return smallResUses.includes(landUse);
+    }
+
     // Auto-populate info fields
     document.getElementById('landUse').addEventListener('change', updateInfo);
     document.getElementById('floorArea').addEventListener('input', updateInfo);
@@ -1056,6 +1067,8 @@
       }
 
       const isAboveThreshold = desired > currentThreshold;
+      const currentLandUse = document.getElementById('landUse').value;
+      const isSmallRes = isSmallResidentialUse(currentLandUse);
       
       // Calculate parking requirements
       const landscapingCalc = calculateLandscapingPoints(desired, isAboveThreshold);
@@ -1063,8 +1076,11 @@
       // Get site input (only total site size now)
       const totalSiteSize = parseFloat(document.getElementById('totalSiteSize').value);
       
-      // Calculate site points if total site size is provided
-      const siteCalc = calculateSitePoints(totalSiteSize, desired);
+      // Calculate site points if total site size is provided AND not a small residential use
+      let siteCalc = { points: 0, breakdown: [], valid: false, actualParkingAreaSize: 0 };
+      if (!isSmallRes) {
+        siteCalc = calculateSitePoints(totalSiteSize, desired);
+      }
       
       // Remove any existing result boxes
       const existingComparisonResult = document.getElementById('comparisonResult');
@@ -1126,8 +1142,8 @@
         requirementsHTML += '</ul>';
       }
       
-      // Add design requirements if any
-      if (landscapingCalc.designRequirements && landscapingCalc.designRequirements.length > 0) {
+      // Only add design requirements if spaces >= 6 AND there are design requirements
+      if (desired >= 6 && landscapingCalc.designRequirements && landscapingCalc.designRequirements.length > 0) {
         requirementsHTML += '<h4>General Design Requirements</h4>';
         requirementsHTML += '<ul style="margin: 0; padding-left: 20px;">';
         landscapingCalc.designRequirements.forEach(req => {
@@ -1138,9 +1154,9 @@
       
       requirementsBox.innerHTML = requirementsHTML;
       
-      // Add site area calculation box if total site size is provided
+      // Add site area calculation box if total site size is provided AND not a small residential use
       let siteBox = null;
-      if (!isNaN(totalSiteSize) && totalSiteSize > 0) {
+      if (!isSmallRes && !isNaN(totalSiteSize) && totalSiteSize > 0) {
         siteBox = document.createElement('div');
         siteBox.id = 'siteCalculation';
         siteBox.style.marginTop = '20px';
@@ -1475,7 +1491,3 @@
   </script>
 </body>
 </html>
-
-
-
-
