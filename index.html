@@ -711,18 +711,14 @@
       requirementsBox.style.cssText = 'margin-top:20px;padding:20px;border-radius:8px;background:#f8f9fa;border:1px solid #e9ecef;';
 
       if (isSmallRes) {
-        // ── SMALL RESIDENTIAL: tree-based output, no points ─────────────────
+        // ── SMALL RESIDENTIAL: tree-based output only ────────────────────────
         const treeCount = isAboveThreshold ? 3 : 2;
 
-        let html = '<h4>Landscaping Requirements</h4>';
-        html += '<p>For one-to-four dwelling uses, landscaping requirements are as follows:</p>';
-        html += '<ul style="margin:10px 0;padding-left:20px;">';
-        html += `<li style="margin-bottom:8px;"><strong>Streetscape Plantings</strong> are required along all street frontages per the applicable streetscape standards.</li>`;
-        html += `<li style="margin-bottom:8px;"><strong>Parking Lot Landscaping:</strong> A minimum of <strong>${treeCount} tree${treeCount > 1 ? 's' : ''}</strong> shall be provided on the parcel. `
-               + `(${isAboveThreshold ? 'Above threshold — 3 trees required' : 'Below or at threshold — 2 trees required'})</li>`;
-        html += `<li style="margin-bottom:8px;">Parking lot landscaping requirements <strong>may overlap</strong> with Streetscape Plantings.</li>`;
-        html += '</ul>';
-        html += '<p style="font-style:italic;font-size:13px;color:#666;">Developed Area landscaping points are <strong>not required</strong> for this use type.</p>';
+        let html = '<h4>Parking Lot Landscaping Requirements</h4>';
+        html += '<p>Landscape requirements for one-to-four dwelling uses include <strong>Streetscape Plantings</strong>. Developed Area points are not required.</p>';
+        html += '<p>Parking Lot landscaping shall be satisfied as follows (and may overlap with Streetscape Plantings):</p>';
+        html += `<p>A minimum of <strong>${treeCount} tree${treeCount > 1 ? 's' : ''}</strong> shall be provided on the parcel `
+              + `<em>(${isAboveThreshold ? 'above threshold — 3 trees required' : 'below or at threshold — 2 trees required'})</em>.</p>`;
 
         requirementsBox.innerHTML = html;
 
