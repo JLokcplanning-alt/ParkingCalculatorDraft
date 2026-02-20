@@ -711,16 +711,22 @@
       requirementsBox.style.cssText = 'margin-top:20px;padding:20px;border-radius:8px;background:#f8f9fa;border:1px solid #e9ecef;';
 
       if (isSmallRes) {
-        // ── SMALL RESIDENTIAL: tree-based output only ────────────────────────
+        // ── SMALL RESIDENTIAL: same points calc, but design requirements = tree count only ──
+        const landscapingCalc = calculateLandscapingPoints(desired, isAboveThreshold);
         const treeCount = isAboveThreshold ? 3 : 2;
 
-        let html = '<h4>Parking Lot Landscaping Requirements</h4>';
-        html += '<p>Landscape requirements for one-to-four dwelling uses include <strong>Streetscape Plantings</strong>. Developed Area points are not required.</p>';
-        html += '<p>Parking Lot landscaping shall be satisfied as follows (and may overlap with Streetscape Plantings):</p>';
-        html += `<p>A minimum of <strong>${treeCount} tree${treeCount > 1 ? 's' : ''}</strong> shall be provided on the parcel `
-              + `<em>(${isAboveThreshold ? 'above threshold — 3 trees required' : 'below or at threshold — 2 trees required'})</em>.</p>`;
+        let reqHTML = '<h4>Parking Area Landscaping Requirements</h4>';
+        reqHTML += `<p><strong>Parking Area Points Required: ${landscapingCalc.points}</strong></p>`;
+        if (landscapingCalc.breakdown.length > 0) {
+          reqHTML += '<p><strong>Calculation:</strong></p><ul style="margin:0;padding-left:20px;">';
+          landscapingCalc.breakdown.forEach(item => { reqHTML += `<li style="margin-bottom:8px;">${item}</li>`; });
+          reqHTML += '</ul>';
+        }
+        reqHTML += '<h4>General Design Requirements</h4>';
+        reqHTML += '<p>Landscape requirements for one-to-four dwelling uses include Streetscape Plantings. Developed Area points are not required. Parking Lot landscaping shall be satisfied per the following and may overlap with Streetscape Plantings:</p>';
+        reqHTML += `<p>A minimum of <strong>${treeCount} tree${treeCount > 1 ? 's' : ''}</strong> shall be provided on the parcel.</p>`;
 
-        requirementsBox.innerHTML = html;
+        requirementsBox.innerHTML = reqHTML;
 
         // No site calculation box for small residential
         landscapingWrapper.insertAdjacentElement('afterend', statusBox);
