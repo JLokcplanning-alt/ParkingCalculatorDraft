@@ -494,15 +494,8 @@
     let currentThreshold = 0;
     const STANDARD_PARKING_AREA = 300;
 
-    // ─── Small residential uses: tree-based requirements, no points ───────────
     function isSmallResidentialUse(landUse) {
-      const smallResUses = [
-        "Detached Dwelling",
-        "Two-Dwelling",
-        "Three or Four Dwelling",
-        "Land Lease Community"
-      ];
-      return smallResUses.includes(landUse);
+      return ["Detached Dwelling","Two-Dwelling","Three or Four Dwelling","Land Lease Community"].includes(landUse);
     }
 
     document.getElementById('landUse').addEventListener('change', updateInfo);
@@ -540,12 +533,12 @@
 
       document.getElementById('lutaContainer').style.display = 'flex';
 
-      const isMixedUse = (d === 'MIXED');
-      const isResOnly  = (d === 'R');
+      const isMixedUse   = (d === 'MIXED');
+      const isResOnly    = (d === 'R');
       const isNonResOnly = (!isResOnly && !isMixedUse && d !== '' && d !== 'PARKING');
 
-      document.getElementById('floorAreaContainer').style.display    = (isNonResOnly || isMixedUse) ? 'flex' : 'none';
-      document.getElementById('dwellingUnitsContainer').style.display = (isResOnly || isMixedUse) ? 'flex' : 'none';
+      document.getElementById('floorAreaContainer').style.display     = (isNonResOnly || isMixedUse) ? 'flex' : 'none';
+      document.getElementById('dwellingUnitsContainer').style.display  = (isResOnly || isMixedUse) ? 'flex' : 'none';
       document.getElementById('mixedUseNonResContainer').style.display = isMixedUse ? 'flex' : 'none';
 
       let infoText = '';
@@ -569,9 +562,9 @@
         document.getElementById('mixedUseInfo').textContent = '';
       }
 
-      const floorAreaInfo   = document.querySelector('#floorAreaContainer .sizeInfo');
-      const dwellingInfo    = document.querySelector('#dwellingUnitsContainer .sizeInfo');
-      const floorAreaInput  = document.getElementById('floorArea');
+      const floorAreaInfo  = document.querySelector('#floorAreaContainer .sizeInfo');
+      const dwellingInfo   = document.querySelector('#dwellingUnitsContainer .sizeInfo');
+      const floorAreaInput = document.getElementById('floorArea');
       if (floorAreaInfo) floorAreaInfo.textContent = 'Sq Ft';
       if (dwellingInfo)  dwellingInfo.textContent  = 'Units';
       floorAreaInput.placeholder = isMixedUse
@@ -631,39 +624,79 @@
       return { points: sitePoints, breakdown, valid: true, actualParkingAreaSize };
     }
 
+    // ─── Bracket-based landscaping points ────────────────────────────────────
+    //
+    //  Band        Below/At Threshold    Above Threshold
+    //  1–4         30 pts (base floor)   45 pts (base floor)
+    //  5–149       +3 pts/space          +5 pts/space
+    //  150–749     +4 pts/space          +6 pts/space
+    //  750–999     +5 pts/space          +7 pts/space
+    //  1,001+      +20 pts/space         +20 pts/space  (excess over 1,000)
+    //
+    // Example (below, 5 spaces):  30 + (1 × 3) = 33
+    // Example (above, 5 spaces):  45 + (1 × 5) = 50
+    //
     function calculateLandscapingPoints(spaces, isAboveThreshold) {
       let pointsCount = 0;
-      let breakdown = [];
-      let designRequirements = [];
+      const breakdown = [];
+      const designRequirements = [];
 
-      if (spaces >= 1) {
-        if (isAboveThreshold) { pointsCount += 45; breakdown.push("Base Minimum: 45 Points"); }
-        else                  { pointsCount += 30; breakdown.push("Base Minimum: 30 Points"); }
+      if (spaces < 1) {
+        return { points: 0, breakdown, designRequirements };
       }
+
+      // Band 1–4: flat base minimum
+      const base = isAboveThreshold ? 45 : 30;
+      pointsCount += base;
+      breakdown.push(`Base Minimum (1–4 spaces): ${base} Points`);
+
+      // Band 5–149: 3 or 5 pts per space in this range
       if (spaces >= 5) {
-        const additionalPoints = isAboveThreshold ? 5 * spaces : 3 * spaces;
-        breakdown.push(`Base Points Per Space (${isAboveThreshold ? 5 : 3} Per 1 Space): ${additionalPoints} Points`);
-        pointsCount += additionalPoints;
+        const inBand = Math.min(spaces, 149) - 4;   // e.g. spaces=5 → 1; spaces=149 → 145
+        const rate   = isAboveThreshold ? 5 : 3;
+        const pts    = inBand * rate;
+        pointsCount += pts;
+        breakdown.push(
+          `Spaces 5–${Math.min(spaces, 149)} (${inBand} space${inBand !== 1 ? 's' : ''} × ${rate} pts/space): ${pts} Points`
+        );
       }
+
+      // Band 150–749: 4 or 6 pts per space in this range
       if (spaces >= 150) {
-        const extra150 = spaces - 150;
-        breakdown.push(`Spaces Over 150: Add 1 Point Per Additional Space = ${extra150} Points`);
-        pointsCount += extra150;
+        const inBand = Math.min(spaces, 749) - 149; // e.g. spaces=150 → 1; spaces=749 → 600
+        const rate   = isAboveThreshold ? 6 : 4;
+        const pts    = inBand * rate;
+        pointsCount += pts;
+        breakdown.push(
+          `Spaces 150–${Math.min(spaces, 749)} (${inBand} space${inBand !== 1 ? 's' : ''} × ${rate} pts/space): ${pts} Points`
+        );
       }
+
+      // Band 750–999: 5 or 7 pts per space in this range
       if (spaces >= 750) {
-        const extra750 = spaces - 750;
-        breakdown.push(`Spaces Over 750: Add 1 Point Per Additional Space = ${extra750} Points`);
-        pointsCount += extra750;
+        const inBand = Math.min(spaces, 999) - 749; // e.g. spaces=750 → 1; spaces=999 → 250
+        const rate   = isAboveThreshold ? 7 : 5;
+        const pts    = inBand * rate;
+        pointsCount += pts;
+        breakdown.push(
+          `Spaces 750–${Math.min(spaces, 999)} (${inBand} space${inBand !== 1 ? 's' : ''} × ${rate} pts/space): ${pts} Points`
+        );
       }
-      if (spaces >= 1000) {
-        const extra1000 = spaces - 1000;
-        const pts1000 = extra1000 * 15;
-        breakdown.push(`Spaces Over 1000: 15 Points Per Additional Space = ${pts1000} Points`);
-        pointsCount += pts1000;
+
+      // Band 1,001+: 20 pts per space over 1,000 (same both tiers)
+      if (spaces >= 1001) {
+        const inBand = spaces - 1000;
+        const pts    = inBand * 20;
+        pointsCount += pts;
+        breakdown.push(
+          `Spaces Over 1,000 (${inBand} space${inBand !== 1 ? 's' : ''} × 20 pts/space): ${pts} Points`
+        );
       }
+
+      // Design requirements (unchanged)
       if (spaces >= 6) {
-        const islandSpacing  = isAboveThreshold ? 6  : 10;
-        const medianSpacing  = isAboveThreshold ? 4  : 6;
+        const islandSpacing = isAboveThreshold ? 6  : 10;
+        const medianSpacing = isAboveThreshold ? 4  : 6;
         designRequirements.push(`Interior parking island every ${islandSpacing} spaces (minimum 1 tree in each interior island)`);
         designRequirements.push(`Landscape median every ${medianSpacing} rows of parking`);
         designRequirements.push("Terminal islands at ends of each parking row (minimum 2 trees in each terminal island)");
@@ -676,6 +709,7 @@
           }
         }
       }
+
       return { points: pointsCount, breakdown, designRequirements };
     }
 
@@ -691,7 +725,6 @@
       const currentLandUse   = document.getElementById('landUse').value;
       const isSmallRes       = isSmallResidentialUse(currentLandUse);
 
-      // Remove any existing result boxes
       ['comparisonResult','treeCalculation','siteCalculation'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.remove();
@@ -699,21 +732,19 @@
 
       const landscapingWrapper = document.getElementById('landscapingWrapper');
 
-      // ── Status box ──────────────────────────────────────────────────────────
+      // Status box
       const statusBox = document.createElement('div');
       statusBox.id = 'comparisonResult';
       statusBox.style.cssText = 'margin-top:20px;padding:20px;border-radius:8px;background:#f8f9fa;border:1px solid #e9ecef;text-align:center;font-size:18px;font-weight:600;';
       statusBox.innerHTML = isAboveThreshold ? '<strong>ABOVE THRESHOLD</strong>' : '<strong>BELOW OR AT THRESHOLD</strong>';
 
-      // ── Requirements box ────────────────────────────────────────────────────
+      // Requirements box
       const requirementsBox = document.createElement('div');
       requirementsBox.id = 'treeCalculation';
       requirementsBox.style.cssText = 'margin-top:20px;padding:20px;border-radius:8px;background:#f8f9fa;border:1px solid #e9ecef;';
 
       if (isSmallRes) {
-        // ── SMALL RESIDENTIAL: same points calc, but design requirements = tree count only ──
         const landscapingCalc = calculateLandscapingPoints(desired, isAboveThreshold);
-        const treeCount = isAboveThreshold ? 3 : 2;
 
         let reqHTML = '<h4>Parking Area Landscaping Requirements</h4>';
         reqHTML += `<p><strong>Parking Area Points Required: ${landscapingCalc.points}</strong></p>`;
@@ -723,17 +754,18 @@
           reqHTML += '</ul>';
         }
         reqHTML += '<h4>General Design Requirements</h4>';
-        reqHTML += '<p>Landscape requirements for one-to-four dwelling uses include Streetscape Plantings. Developed Area points are not required. Parking Lot landscaping shall be satisfied per the following and may overlap with Streetscape Plantings:</p>';
-        reqHTML += `<p>A minimum of <strong>${treeCount} tree${treeCount > 1 ? 's' : ''}</strong> shall be provided on the parcel.</p>`;
+        reqHTML += '<p>Landscape requirements for one to four dwellings include Streetscape Plantings and Parking Area points.</p>';
+        if (isAboveThreshold) {
+          reqHTML += '<p>A minimum of <strong>three trees</strong> shall be provided on the parcel.</p>';
+        } else {
+          reqHTML += '<p>A minimum of <strong>two trees</strong> shall be provided on the parcel.</p>';
+        }
 
         requirementsBox.innerHTML = reqHTML;
-
-        // No site calculation box for small residential
         landscapingWrapper.insertAdjacentElement('afterend', statusBox);
         statusBox.insertAdjacentElement('afterend', requirementsBox);
 
       } else {
-        // ── ALL OTHER USES: standard points-based output ─────────────────────
         const landscapingCalc = calculateLandscapingPoints(desired, isAboveThreshold);
         const totalSiteSize   = parseFloat(document.getElementById('totalSiteSize').value);
         const siteCalc        = calculateSitePoints(totalSiteSize, desired);
@@ -752,7 +784,6 @@
         }
         requirementsBox.innerHTML = reqHTML;
 
-        // Site calculation box (only if total site size provided)
         let siteBox = null;
         if (!isNaN(totalSiteSize) && totalSiteSize > 0) {
           siteBox = document.createElement('div');
@@ -778,7 +809,7 @@
       }
     }
 
-    // ─── Build landscaping wrapper (shared by parking lot + threshold calc) ───
+    // ─── Build landscaping wrapper ────────────────────────────────────────────
     function buildLandscapingWrapper(title, isParkingLot) {
       const wrapper = document.createElement('div');
       wrapper.className = 'landscaping-inputs';
@@ -804,7 +835,6 @@
       desiredDiv.appendChild(input);
       desiredDiv.appendChild(span);
 
-      // Site area section
       const siteDiv = document.createElement('div');
       siteDiv.className = 'site-inputs';
 
@@ -864,7 +894,7 @@
       const ctx = document.getElementById('luta').value;
       if (!lu || !ctx) { alert('Please select both Land Use and LUTA.'); return; }
 
-      let formula, rawValue, threshold, minReq;
+      let formula, rawValue, threshold;
 
       if (d === 'MIXED') {
         const gfa = parseFloat(document.getElementById('floorArea').value);
@@ -874,19 +904,18 @@
         if (isNaN(du)  || du  <= 0)  { alert('Enter a valid number of dwelling units for the residential component.'); return; }
         if (!selectedNonRes)          { alert('Select a non-residential use for the mixed-use development.'); return; }
 
-        const nonResBR   = BASE_THRESHOLD_RATES[DEMAND_LEVELS[selectedNonRes]];
-        const nonResMul  = getFloorMultiplier(gfa, ctx);
-        const nonResRaw  = nonResBR * nonResMul * (gfa / 1000);
-        const nonResThr  = Math.ceil(nonResRaw);
+        const nonResBR  = BASE_THRESHOLD_RATES[DEMAND_LEVELS[selectedNonRes]];
+        const nonResMul = getFloorMultiplier(gfa, ctx);
+        const nonResRaw = nonResBR * nonResMul * (gfa / 1000);
+        const nonResThr = Math.ceil(nonResRaw);
 
-        const resBR      = BASE_THRESHOLD_RATES['R'];
-        const resMul     = RESIDENTIAL_MULTIPLIERS[ctx];
-        const resRaw     = resBR * resMul * du;
-        const resThr     = Math.ceil(resRaw);
+        const resBR  = BASE_THRESHOLD_RATES['R'];
+        const resMul = RESIDENTIAL_MULTIPLIERS[ctx];
+        const resRaw = resBR * resMul * du;
+        const resThr = Math.ceil(resRaw);
 
         rawValue  = nonResRaw + resRaw;
         threshold = nonResThr + resThr;
-        minReq    = du;
 
         const nonResFormulaHTML = `${nonResBR} × ${nonResMul.toFixed(3)} × <span class="fraction"><span class="num">${gfa.toLocaleString()} sf</span><span class="den">1 000</span></span>`;
         formula = `${selectedNonRes}: (${nonResFormulaHTML} = ${nonResThr}) + Res: (${resBR} × ${resMul.toFixed(3)} × ${du} = ${resThr})`;
@@ -898,7 +927,6 @@
         const mul = RESIDENTIAL_MULTIPLIERS[ctx];
         rawValue  = br * mul * du;
         threshold = Math.ceil(rawValue);
-        minReq    = du;
         formula   = `${br} × ${mul.toFixed(3)} × ${du}`;
 
       } else {
