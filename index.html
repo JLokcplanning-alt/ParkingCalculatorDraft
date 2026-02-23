@@ -687,13 +687,13 @@
         );
       }
 
-      // Band 1,001+: 20 pts per space over 1,000 (same both tiers)
-      if (spaces >= 1001) {
-        const inBand = spaces - 1000;
+      // Band 1,000+: 20 pts per space from 1,000 onwards
+      if (spaces >= 1000) {
+        const inBand = spaces - 999;
         const pts    = inBand * 20;
         pointsCount += pts;
         breakdown.push(
-          `Spaces Over 1,000 (${inBand} space${inBand !== 1 ? 's' : ''} × 20 pts/space): ${pts} Points`
+          `Spaces 1,000+ (${inBand} space${inBand !== 1 ? 's' : ''} × 20 pts/space): ${pts} Points`
         );
       }
 
