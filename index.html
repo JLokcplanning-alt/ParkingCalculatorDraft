@@ -498,6 +498,10 @@
       return ["Detached Dwelling","Two-Dwelling","Three or Four Dwelling","Land Lease Community"].includes(landUse);
     }
 
+    function hideSiteSizeForUse(landUse) {
+      return ["Detached Dwelling","Two-Dwelling","Three or Four Dwelling","Townhouse"].includes(landUse);
+    }
+
     document.getElementById('landUse').addEventListener('change', updateInfo);
     document.getElementById('floorArea').addEventListener('input', updateInfo);
     document.getElementById('dwellingUnits').addEventListener('input', updateInfo);
@@ -592,7 +596,7 @@
       currentThreshold = 0;
 
       if (!document.getElementById('desiredSpacesContainer')) {
-        const wrapper = buildLandscapingWrapper('Parking Lot Landscaping Requirements', true);
+        const wrapper = buildLandscapingWrapper('Parking Lot Landscaping Requirements', true, false);
         const landUseRow = document.querySelector('.input-row');
         landUseRow.insertAdjacentElement('afterend', wrapper);
       }
@@ -810,7 +814,7 @@
     }
 
     // ─── Build landscaping wrapper ────────────────────────────────────────────
-    function buildLandscapingWrapper(title, isParkingLot) {
+    function buildLandscapingWrapper(title, isParkingLot, hideSite) {
       const wrapper = document.createElement('div');
       wrapper.className = 'landscaping-inputs';
       wrapper.id = 'landscapingWrapper';
@@ -879,7 +883,9 @@
       btnDiv.appendChild(btn);
 
       wrapper.appendChild(desiredDiv);
-      wrapper.appendChild(siteDiv);
+      if (!hideSite) {
+        wrapper.appendChild(siteDiv);
+      }
       wrapper.appendChild(btnDiv);
       return wrapper;
     }
@@ -950,7 +956,7 @@
       rdiv.style.display = 'block';
 
       if (!document.getElementById('desiredSpacesContainer')) {
-        const wrapper = buildLandscapingWrapper('Landscaping Requirements Calculator', false);
+        const wrapper = buildLandscapingWrapper('Landscaping Requirements Calculator', false, hideSiteSizeForUse(lu));
         document.getElementById('results').insertAdjacentElement('afterend', wrapper);
       }
 
