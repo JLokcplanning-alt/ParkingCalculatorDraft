@@ -802,7 +802,7 @@
 </head>
 <body>
   <h1>OKC Parking and Landscaping Requirements Calculator</h1>
-  <p class="calculator-subtitle">Version 3.1.14 | July 28, 2026 | For Oklahoma City’s Draft Code Update</p>
+  <p class="calculator-subtitle">Version 3.1.8 | July 28, 2026 | For Oklahoma City’s Draft Code Update</p>
 
   <section class="card" aria-label="Project land uses">
     <div class="component" id="primaryComponent">
@@ -1234,7 +1234,7 @@
   </section>
 
   <section id="parkingSupplySection" class="card hidden">
-    <h3>Off-Street Parking Spaces Desired</h3>
+    <h3>Off Street Parking Spaces</h3>
     <div class="input-row"><label for="standardSpaces">Surface Parking Spaces</label><input id="standardSpaces" type="number" min="0" step="1" value="0" placeholder="Enter Surface Parking Spaces"><span class="parking-field-citation standard-space-citation" data-citation-key="standardSpaces"></span><span class="field-error"></span></div>
     <div class="input-row"><label for="structuredSpaces">Structured Parking Spaces</label><input id="structuredSpaces" type="number" min="0" step="1" value="0" placeholder="Enter Structured Parking Spaces"><span class="parking-field-citation standard-space-citation" data-citation-key="structuredSpaces"></span><span class="field-error"></span></div>
     <div class="input-row"><label for="surfaceParkingFootprint">Surface Parking Area Footprint (sq ft, optional)</label><input id="surfaceParkingFootprint" type="number" min="0" step="1" placeholder="Uses 300 sq ft per surface space when blank"><span class="field-error"></span></div>
@@ -1242,9 +1242,9 @@
     <details class="optional-toggle">
       <summary>Parking Substitutions</summary>
       <div class="inventory-grid">
-        <div class="input-row"><div class="inventory-field-heading"><label for="perviousSpaces">How many of the desired surface parking spaces will use qualifying pervious paving?</label><span class="parking-field-citation" data-citation-key="perviousSpaces"></span></div><input id="perviousSpaces" type="number" min="0" step="1" value="0"><span class="field-error"></span></div>
-        <div class="input-row"><div class="inventory-field-heading"><label for="evseSpaces">How many of the desired surface parking spaces will be EVSE Spaces (Electric Vehicle Charging Stations)?</label><span class="parking-field-citation" data-citation-key="evseSpaces"></span></div><input id="evseSpaces" type="number" min="0" step="1" value="0"><span class="field-error"></span></div>
-        <div class="input-row"><div class="inventory-field-heading"><label for="evReadySpaces">How many of the desired surface parking spaces will be EV-Ready Spaces?</label><span class="parking-field-citation" data-citation-key="evReadySpaces"></span></div><input id="evReadySpaces" type="number" min="0" step="1" value="0"><span class="field-error"></span></div>
+        <div class="input-row"><div class="inventory-field-heading"><label for="perviousSpaces">How many of the surface parking spaces will use qualifying pervious paving?</label><span class="parking-field-citation" data-citation-key="perviousSpaces"></span></div><input id="perviousSpaces" type="number" min="0" step="1" value="0"><span class="field-error"></span></div>
+        <div class="input-row"><div class="inventory-field-heading"><label for="evseSpaces">How many of the surface parking spaces will be EVSE Spaces (Electric Vehicle Charging Stations)?</label><span class="parking-field-citation" data-citation-key="evseSpaces"></span></div><input id="evseSpaces" type="number" min="0" step="1" value="0"><span class="field-error"></span></div>
+        <div class="input-row"><div class="inventory-field-heading"><label for="evReadySpaces">How many of the surface parking spaces will be EV-Ready Spaces?</label><span class="parking-field-citation" data-citation-key="evReadySpaces"></span></div><input id="evReadySpaces" type="number" min="0" step="1" value="0"><span class="field-error"></span></div>
       </div>
     </details>
     <details class="optional-toggle">
@@ -1258,17 +1258,17 @@
     <details class="optional-toggle">
       <summary>Qualifying Parking Types</summary>
       <div class="inventory-grid">
-        <div class="input-row"><div class="inventory-field-heading"><label for="motorcycleSpaces">How many motorcycle parking spaces are desired but not included in the Surface Parking Spaces above?</label><span class="parking-field-citation" data-citation-key="motorcycleSpaces"></span></div><input id="motorcycleSpaces" type="number" min="0" step="1" value="0"><span class="field-error"></span></div>
-        <div class="input-row"><div class="inventory-field-heading"><label for="stackingSpaces">How many drive-through stacking spaces are desired but not included in the Surface Parking Spaces above?</label><span class="parking-field-citation" data-citation-key="stackingSpaces"></span></div><input id="stackingSpaces" type="number" min="0" step="1" value="0"><span class="field-error"></span></div>
-        <div class="input-row"><div class="inventory-field-heading"><label for="queuingSpaces">How many passenger queuing spaces are desired but not included in the Surface Parking Spaces above?</label><span class="parking-field-citation" data-citation-key="queuingSpaces"></span></div><input id="queuingSpaces" type="number" min="0" step="1" value="0"><span class="field-error"></span></div>
-        <div class="input-row"><div class="inventory-field-heading"><label for="loadingSpaces">How many off-street loading spaces are desired but not included in the Surface Parking Spaces above?</label><span class="parking-field-citation" data-citation-key="loadingSpaces"></span></div><input id="loadingSpaces" type="number" min="0" step="1" value="0"><span class="field-error"></span></div>
+        <div class="input-row"><div class="inventory-field-heading"><label for="motorcycleSpaces">How many motorcycle parking spaces are not included in the Surface Parking Spaces above?</label><span class="parking-field-citation" data-citation-key="motorcycleSpaces"></span></div><input id="motorcycleSpaces" type="number" min="0" step="1" value="0"><span class="field-error"></span></div>
+        <div class="input-row"><div class="inventory-field-heading"><label for="stackingSpaces">How many drive-through stacking spaces are not included in the Surface Parking Spaces above?</label><span class="parking-field-citation" data-citation-key="stackingSpaces"></span></div><input id="stackingSpaces" type="number" min="0" step="1" value="0"><span class="field-error"></span></div>
+        <div class="input-row"><div class="inventory-field-heading"><label for="queuingSpaces">How many passenger queuing spaces are not included in the Surface Parking Spaces above?</label><span class="parking-field-citation" data-citation-key="queuingSpaces"></span></div><input id="queuingSpaces" type="number" min="0" step="1" value="0"><span class="field-error"></span></div>
+        <div class="input-row"><div class="inventory-field-heading"><label for="loadingSpaces">How many off-street loading spaces are not included in the Surface Parking Spaces above?</label><span class="parking-field-citation" data-citation-key="loadingSpaces"></span></div><input id="loadingSpaces" type="number" min="0" step="1" value="0"><span class="field-error"></span></div>
       </div>
     </details>
     <details class="optional-toggle">
       <summary>Covered Parking Types</summary>
       <div class="inventory-grid">
-        <div class="input-row"><div class="inventory-field-heading"><label for="fabricShadeSpaces">How many of the desired surface parking spaces will be located entirely under a qualifying fabric or light-color shade structure?</label><span class="parking-field-citation" data-citation-key="fabricShadeSpaces"></span></div><input id="fabricShadeSpaces" type="number" min="0" step="1" value="0"><span class="field-error"></span></div>
-        <div class="input-row"><div class="inventory-field-heading"><label for="solarShadeSpaces">How many of the desired surface parking spaces will be located entirely under a shade structure with a solar-panel roof?</label><span class="parking-field-citation" data-citation-key="solarShadeSpaces"></span></div><input id="solarShadeSpaces" type="number" min="0" step="1" value="0"><span class="field-error"></span></div>
+        <div class="input-row"><div class="inventory-field-heading"><label for="fabricShadeSpaces">How many of the surface parking spaces will be located entirely under a qualifying fabric or light-color shade structure?</label><span class="parking-field-citation" data-citation-key="fabricShadeSpaces"></span></div><input id="fabricShadeSpaces" type="number" min="0" step="1" value="0"><span class="field-error"></span></div>
+        <div class="input-row"><div class="inventory-field-heading"><label for="solarShadeSpaces">How many of the surface parking spaces will be located entirely under a shade structure with a solar-panel roof?</label><span class="parking-field-citation" data-citation-key="solarShadeSpaces"></span></div><input id="solarShadeSpaces" type="number" min="0" step="1" value="0"><span class="field-error"></span></div>
       </div>
     </details>
     <details class="optional-toggle">
