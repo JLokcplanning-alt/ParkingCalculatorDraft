@@ -231,7 +231,7 @@
     }
     .threshold-summary-grid {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 16px;
     }
     .threshold-summary-grid .result-card {
@@ -262,46 +262,63 @@
       color: #114877;
       font-weight: 700;
     }
+    .threshold-summary-grid .result-card {
+      color: #114877;
+      font-family: "Outfit", Arial, sans-serif;
+      text-align: left;
+    }
     .metric-card {
       display: flex;
       min-height: 154px;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      text-align: center;
     }
+    .threshold-summary-grid .metric-card { text-align: center; }
     .metric-label,
-    .metric-unit {
-      margin: 0;
-      color: #000000;
-      font-size: 1rem;
+    .threshold-marker-label,
+    .threshold-range-label {
+      display: block;
+      margin: 0 0 6px;
+      color: #527B9A;
+      font-size: 1.1rem;
+      font-weight: 600;
       line-height: 1.35;
     }
-    .metric-value {
-      margin: 8px 0;
-      color: #114877;
-      font-size: clamp(2.5rem, 5vw, 3.75rem);
+    .minimum-summary-value,
+    .threshold-marker-value,
+    .threshold-range-value {
+      display: block;
+      margin: 0;
+      color: inherit;
+      font-size: 1.4rem;
       font-weight: 700;
-      line-height: 1;
+      line-height: 1.3;
     }
-    .metric-value.is-text {
-      font-size: 1.35rem;
-      line-height: 1.2;
+    .metric-value {
+      display: block;
+      margin: 8px 0;
+      color: inherit;
+      font-size: 3rem;
+      font-weight: 700;
+      line-height: 1.1;
+    }
+    .metric-unit {
+      display: block;
+      margin: 0;
+      color: inherit;
+      font-size: 1.1rem;
+      font-weight: 400;
+      line-height: 1.35;
     }
     .result-card.primary, .result-card.minimum, .result-card.status { border-top: 1px solid #E4EEF8; }
+    .threshold-marker {
+      padding-bottom: 16px;
+      margin-bottom: 16px;
+      border-bottom: 1px solid rgba(17, 72, 119, 0.22);
+    }
     .threshold-range + .threshold-range {
-      margin-top: 12px;
-    }
-    .threshold-range-label {
-      margin-bottom: 3px;
-      color: #527B9A;
-      font-size: 1rem;
-      font-weight: 700;
-    }
-    .threshold-range-value {
-      color: #114877;
-      font-size: 1rem;
-      font-weight: 700;
+      margin-top: 18px;
     }
     .ledger {
       margin: 16px 0 0;
@@ -522,7 +539,7 @@
       padding: 8px 12px; background: #F6F0E3; border-radius: 6px;
     }
     .substitution-summary strong { margin-left: 8px; font-size: 1.1rem; }
-    #primaryComponent > .input-row > label {
+    #primaryComponent > .input-row > label, #lutaContainer > label {
       position: absolute;
       width: 1px;
       height: 1px;
@@ -798,13 +815,108 @@
       body { max-width: none; padding: 0; }
       .card { break-inside: avoid; }
     }
+    .project-mode { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); position:relative; isolation:isolate; box-sizing:border-box; width:430px; max-width:100%; padding:4px; margin-bottom:24px; background:#E4EEF8; border:1px solid #A7C7E8; border-radius:9px; color:#114877; }
+    .project-mode::before { content:""; position:absolute; z-index:-1; top:4px; bottom:4px; left:4px; width:calc((100% - 8px)/2); border-radius:6px; background:#114877; box-shadow:0 1px 3px rgba(17,72,119,.15); transition:transform .18s ease; }
+    .project-mode:has(input[value="reconstruction"]:checked)::before { transform:translateX(100%); }
+    .project-mode label { display:flex; position:relative; align-items:center; justify-content:center; min-width:0; padding:11px 12px; border-radius:6px; font-size:14px; font-weight:600; line-height:1.35; text-align:center; cursor:pointer; }
+    .project-mode input { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+    .project-mode input + span { transition:color .18s ease; }
+    .project-mode input:checked + span { color:#fff; }
+    .project-mode label:has(input:focus-visible) { outline:2px solid #C39A46; outline-offset:2px; }
+    .dwelling-options label { display:inline-flex; align-items:center; gap:6px; font-size:14px; cursor:pointer; }
+    .dwelling-options input { width:auto; margin:0; accent-color:#114877; }
+    @media(prefers-reduced-motion:reduce) { .project-mode::before,.project-mode input + span { transition:none; } }
+    .dwelling-controls { margin:-8px 0 22px; }
+    .dwelling-size-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; margin:10px 0 12px; }
+    .dwelling-size-grid label { display:block; font-size:13px; color:#114877; margin-bottom:6px; }
+    .dwelling-size-grid > div { min-width:0; }
+    .dwelling-size-grid input { box-sizing:border-box; width:100%; min-width:0; padding:12px; border:1px solid #A7C7E8; border-radius:6px; font:14px "Inclusive Sans",Arial,sans-serif; }
+    #primaryComponent > #dwellingUnitsContainer { flex-direction:column; align-items:stretch; gap:6px; }
+    #primaryComponent > #dwellingUnitsContainer > label { position:static; width:auto; height:auto; padding:0; margin:0; overflow:visible; clip:auto; white-space:normal; flex:none; font-size:13px; color:#114877; }
+    .dwelling-options { display:flex; flex-wrap:wrap; gap:10px 18px; margin-top:12px; }
+    .dwelling-note { font-size:13px; color:#596777; margin:8px 0 0; }
+    @media(max-width:600px) { .dwelling-size-grid { gap:8px; } .dwelling-size-grid label { font-size:12px; } }
+    .existing-work-grid { display:grid; grid-template-columns:1fr; gap:14px; margin:0 0 24px; }
+    .existing-work-grid > div { min-width:0; }
+    .existing-work-grid label { display:block; margin-bottom:6px; font-size:13px; font-weight:600; color:#114877; }
+    .existing-work-grid input[type="number"],.existing-work-grid select { width:100%; box-sizing:border-box; min-width:0; padding:12px; border:1px solid #A7C7E8; border-radius:6px; font:14px "Inclusive Sans",Arial,sans-serif; background:#fff; }
+    .existing-work-grid .existing-work-check { display:flex; align-items:center; gap:7px; margin:0; }
+    .existing-work-check input { width:auto; accent-color:#114877; }
+    @media(max-width:600px) { .existing-work-grid { grid-template-columns:1fr; } }
+    #useInfo, #mixedUseInfo, #lutaInfo, .component-use-info, .component-mixed-info { display:none !important; }
+    #existingProjectTypeRow { flex-direction:column; align-items:stretch; gap:6px; }
+    #existingProjectTypeRow > label { flex:none; margin:0; font-size:13px; font-weight:600; color:#114877; }
+    #existingProjectTypeRow > label, #existingWorkControls label[for="existingSpaces"] {
+      position:absolute; width:1px; height:1px; padding:0; margin:-1px;
+      overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0;
+    }
+    #existingWorkType, #existingWorkType option { font-family:"Outfit",Arial,sans-serif; font-size:14px; font-weight:400; }
   </style>
 </head>
 <body>
   <h1>OKC Parking and Landscaping Requirements Calculator</h1>
-  <p class="calculator-subtitle">Version 3.1.8 | July 28, 2026 | For Oklahoma City’s Draft Code Update</p>
+  <p class="calculator-subtitle">Version 3.3.12 | November 3, 2026 | For Oklahoma City’s Draft Code Update</p>
 
   <section class="card" aria-label="Project land uses">
+    <div class="project-mode" role="radiogroup" aria-label="Parking area project type">
+      <label><input type="radio" name="parkingProject" value="new" checked><span>New Parking Area</span></label>
+      <label title="Add to, reconstruct, or modify an existing parking area or its associated building."><input type="radio" name="parkingProject" value="reconstruction"><span>Existing Parking Area</span></label>
+    </div>
+      <div id="existingProjectTypeRow" class="input-row hidden" style="display:none"><label for="existingWorkType">Project Type</label><select id="existingWorkType">
+        <option value="">Select Project Type</option>
+        <option value="addition">Parking Area Addition</option>
+        <option value="reconstruction">Parking Area Reconstruction</option>
+        <option value="combined">Parking Addition With Reconstruction</option>
+        <option value="buildingAddition">Building Addition</option>
+        <option value="changeUse">Change of Use</option>
+        <option value="remodel">Building Remodel — No Change of Use</option>
+      </select></div>
+    <div id="existingWorkControls" class="existing-work-grid hidden" style="display:none">
+      <div><label for="existingSpaces" title="Existing parking: count on-site surface, motorcycle, stacking, queuing, and loading spaces. Exclude garages and off-site spaces.">Existing Spaces ⓘ</label><input id="existingSpaces" type="number" min="1" step="1" placeholder="Existing Spaces"></div>
+    </div>
+  <div id="lutaContainer" class="input-row" >
+    <label for="luta">LUTA/Zoning District</label>
+    <select id="luta">
+      <option value="">Select LUTA/Zoning District</option>
+      <optgroup label="DOWNTOWN">
+        <option value="DD-CB">DD-CB</option>
+        <option value="DD-DT">DD-DT</option>
+        <option value="DD-BC">DD-BC</option>
+      </optgroup>
+      <optgroup label="URBAN HIGH">
+        <option value="UH-MX">UH-MX</option>
+        <option value="UH-MD">UH-MD</option>
+      </optgroup>
+      <optgroup label="URBAN MEDIUM">
+        <option value="UM-SD">UM-SD</option>
+        <option value="UM-MD">UM-MD</option>
+        <option value="UM-O">UM-O</option>
+        <option value="UM-MC">UM-MC</option>
+        <option value="UM-MX">UM-MX</option>
+        <option value="UM-HP">UM-HP</option>
+        <option value="UM-LI">UM-LI</option>
+      </optgroup>
+      <optgroup label="URBAN LOW">
+        <option value="UL-SD">UL-SD</option>
+        <option value="UL-MD">UL-MD</option>
+        <option value="UL-O">UL-O</option>
+        <option value="UL-MC">UL-MC</option>
+        <option value="UL-MX">UL-MX</option>
+        <option value="UL-LI">UL-LI</option>
+        <option value="UL-HI">UL-HI</option>
+        <option value="UL-EM">UL-EM</option>
+      </optgroup>
+      <optgroup label="RURAL">
+        <option value="RL-AA">RL-AA</option>
+        <option value="RL-RA">RL-RA</option>
+        <option value="RL-SD">RL-SD</option>
+        <option value="RL-MC">RL-MC</option>
+        <option value="RL-LI">RL-LI</option>
+      </optgroup>
+    </select>
+    <span id="lutaInfo" class="info"></span>
+  </div>
+
     <div class="component" id="primaryComponent">
   <div class="input-row">
     <label for="landUse">Land use</label>
@@ -857,8 +969,6 @@
         <option value="Automobile and Vehicle Sales and Rental">Automobile Vehicle Sales and Rental</option>
         <option value="Cleaning and Repairs">Cleaning and Repairs, Heavy Equipment or Light Equipment</option>
         <option value="Gasoline and Fueling Sales">Gasoline and Fueling Sales</option>
-        <option value="Sales and Rentals, Farm and Heavy Vehicles and Equipment">Sales and Rentals, Farm and Heavy Vehicles and Equipment</option>
-        <option value="Sales and Rentals, Manufactured (Mobile) Homes">Sales and Rentals, Manufactured (Mobile) Homes</option>
         <option value="Vehicle Auction">Vehicle Auction</option>
         <option value="Vehicle Storage">Vehicle Storage</option>
       </optgroup>
@@ -946,6 +1056,7 @@
         <option value="Animal Waste Processing">Animal Waste Processing</option>
         <option value="Composting Facility and Accessory">Composting Facility</option>
         <option value="Horticulture">Horticulture</option>
+        <option value="Urban Agriculture">Urban Agriculture</option>
         <option value="Stockyards">Stockyards</option>
       </optgroup>
     </select>
@@ -993,8 +1104,6 @@
         <option value="Automobile and Vehicle Sales and Rental">Automobile Vehicle Sales and Rental</option>
         <option value="Cleaning and Repairs">Cleaning and Repairs, Heavy Equipment or Light Equipment</option>
         <option value="Gasoline and Fueling Sales">Gasoline and Fueling Sales</option>
-        <option value="Sales and Rentals, Farm and Heavy Vehicles and Equipment">Sales and Rentals, Farm and Heavy Vehicles and Equipment</option>
-        <option value="Sales and Rentals, Manufactured (Mobile) Homes">Sales and Rentals, Manufactured (Mobile) Homes</option>
         <option value="Vehicle Auction">Vehicle Auction</option>
         <option value="Vehicle Storage">Vehicle Storage</option>
       </optgroup>
@@ -1082,6 +1191,7 @@
         <option value="Animal Waste Processing">Animal Waste Processing</option>
         <option value="Composting Facility and Accessory">Composting Facility</option>
         <option value="Horticulture">Horticulture</option>
+        <option value="Urban Agriculture">Urban Agriculture</option>
         <option value="Stockyards">Stockyards</option>
       </optgroup>
     </select>
@@ -1094,49 +1204,6 @@
     <span class="info sizeInfo"></span>
   </div>
 
-  <div id="lutaContainer" class="input-row" style="display: none;">
-    <label for="luta">LUTA/Zoning District</label>
-    <select id="luta">
-      <option value="">Select LUTA/Zoning District</option>
-      <optgroup label="DOWNTOWN">
-        <option value="DD-CB">DD-CB</option>
-        <option value="DD-DT">DD-DT</option>
-        <option value="DD-BC">DD-BC</option>
-      </optgroup>
-      <optgroup label="URBAN HIGH">
-        <option value="UH-MX">UH-MX</option>
-        <option value="UH-MD">UH-MD</option>
-      </optgroup>
-      <optgroup label="URBAN MEDIUM">
-        <option value="UM-SD">UM-SD</option>
-        <option value="UM-MD">UM-MD</option>
-        <option value="UM-O">UM-O</option>
-        <option value="UM-MC">UM-MC</option>
-        <option value="UM-MX">UM-MX</option>
-        <option value="UM-HP">UM-HP</option>
-        <option value="UM-LI">UM-LI</option>
-      </optgroup>
-      <optgroup label="URBAN LOW">
-        <option value="UL-SD">UL-SD</option>
-        <option value="UL-MD">UL-MD</option>
-        <option value="UL-O">UL-O</option>
-        <option value="UL-MC">UL-MC</option>
-        <option value="UL-MX">UL-MX</option>
-        <option value="UL-LI">UL-LI</option>
-        <option value="UL-HI">UL-HI</option>
-        <option value="UL-EM">UL-EM</option>
-      </optgroup>
-      <optgroup label="RURAL">
-        <option value="RL-AA">RL-AA</option>
-        <option value="RL-RA">RL-RA</option>
-        <option value="RL-SD">RL-SD</option>
-        <option value="RL-MC">RL-MC</option>
-        <option value="RL-LI">RL-LI</option>
-      </optgroup>
-    </select>
-    <span id="lutaInfo" class="info"></span>
-  </div>
-
   <div id="totalSiteAreaContainer" class="input-row hidden">
     <label for="totalSiteSize">Gross Site Size</label>
     <div class="site-size-control">
@@ -1146,7 +1213,7 @@
         <button type="button" class="site-size-unit-button" data-site-size-unit="acres" aria-pressed="false">acres</button>
       </div>
     </div>
-    <span class="parking-field-citation" title="Enter the area of the entire site. This value is used to calculate developable-area landscaping points after the parking footprints are subtracted.">Developable-area calculation</span>
+    <span class="parking-field-citation" title="Enter the area of the entire site. This value is used to calculate developed-area landscaping points after the parking footprints are subtracted.">Developed-area calculation</span>
     <span class="field-error"></span>
   </div>
     </div>
@@ -1163,17 +1230,15 @@
 
   <section id="calculationResults" class="card hidden" aria-live="polite">
     <div class="results-grid threshold-summary-grid">
-      <div class="result-card primary metric-card">
-        <p id="thresholdResultLabel" class="metric-label">This site’s parking threshold is</p>
-        <div id="thresholdResult" class="metric-value">—</div>
-        <p id="thresholdResultUnit" class="metric-unit">parking spaces</p>
-      </div>
       <div class="result-card minimum metric-card">
-        <p class="metric-label">This site’s required parking minimum is</p>
-        <div id="minimumResult" class="metric-value">—</div>
-        <p class="metric-unit">parking spaces</p>
+        <p class="metric-label">Required Parking Minimum</p>
+        <div class="minimum-summary-value"><span id="minimumResult" class="metric-value">—</span> <span class="metric-unit">parking spaces</span></div>
       </div>
       <div class="result-card ranges">
+        <div class="threshold-marker">
+          <span class="threshold-marker-label">Parking Threshold</span>
+          <strong id="thresholdMarkerValue" class="threshold-marker-value">—</strong>
+        </div>
         <div class="threshold-range">
           <div class="threshold-range-label">At or Below Threshold</div>
           <div id="atOrBelowRange" class="threshold-range-value">—</div>
@@ -1186,7 +1251,7 @@
     </div>
     <div class="threshold-policy-intro">
       <p>As part of Oklahoma City’s proposed code update and parking development standards, non-residential uses will no longer have minimum parking requirements. Instead, Oklahoma City is proposing a new way to manage and regulate parking requirements for development, the Parking Threshold. The Parking Threshold acts as a soft cap on the number of spaces provided as off-street parking. Parking above the calculated threshold is still allowed, but requires additional landscaping requirements in contrast to parking areas operating at or below the calculated threshold provided.</p>
-      <p>Note: Residential uses may still have minimum parking requirements of up to one (1) space per dwelling, depending on the zoning district and LUTA provided in the inputs above.</p>
+      <p>Residential minimums depend on dwelling type, dwelling size, and street width. Dwellings in DD or MX zones are exempt.</p>
     </div>
     <details>
       <summary>How Was This Calculated?</summary>
@@ -1219,11 +1284,11 @@
         </div>
       </details>
       <details class="reference-table-details">
-        <summary><span>Reference: Required Residential Parking by Zone</span><span id="zoneMinimumReferenceCitation" class="reference-summary-citation"></span></summary>
+        <summary><span>Reference: Residential Parking Minimums</span><span id="zoneMinimumReferenceCitation" class="reference-summary-citation"></span></summary>
         <div class="reference-table-wrap">
           <table class="reference-table">
             <thead>
-              <tr><th scope="col">Zone</th><th scope="col" class="numeric">Required Spaces per Dwelling</th></tr>
+              <tr><th scope="col">Dwelling Type / Floor Area</th><th scope="col" class="numeric">Required Spaces per Dwelling</th></tr>
             </thead>
             <tbody id="zoneMinimumReferenceBody"></tbody>
           </table>
@@ -1301,7 +1366,7 @@
         <section id="minimumStatusCard" class="report-section minimum-status" aria-labelledby="minimumCheckHeading">
           <h3 id="minimumCheckHeading">Required Parking</h3>
           <p id="minimumCheck" class="summary-metric-value">—</p>
-          <p class="summary-metric-unit">qualifying / required spaces</p>
+          <p class="summary-metric-unit">required spaces</p>
         </section>
 
         <section class="report-section" aria-labelledby="additionalRequirementsHeading">
@@ -1367,7 +1432,7 @@
     </details>
 
     <details id="developedAreaResult" class="output-calculation hidden">
-      <summary><span>Developable Area Landscaping Points</span><strong id="developedAreaPointsSummary">—</strong></summary>
+      <summary><span>Developed Area Landscaping Points</span><strong id="developedAreaPointsSummary">—</strong></summary>
       <div id="developedAreaCalculation"></div>
     </details>
 
@@ -1702,23 +1767,23 @@
       } else {
         breakdown.push(`Gross Site Size: ${totalSiteSize.toLocaleString()} sq ft`);
       }
-      breakdown.push(`Developable Area (Gross Site Size − Parking Footprints): ${developedArea.toLocaleString()} sq ft`);
+      breakdown.push(`Developed Area (Gross Site Size − Parking Footprints): ${developedArea.toLocaleString()} sq ft`);
       const sitePoints = Math.ceil(developedArea / 200);
-      breakdown.push(`Developable Area Points (1 per 200 sq ft): ${sitePoints} Points`);
+      breakdown.push(`Developed Area Points (1 per 200 sq ft): ${sitePoints} Points`);
       return { points: sitePoints, breakdown, valid: true, actualParkingAreaSize };
     }
 
     // ─── Bracket-based landscaping points ────────────────────────────────────
     //
     //  Band        Below/At Threshold    Above Threshold
-    //  1–4         30 pts (base floor)   45 pts (base floor)
-    //  5–149       +3 pts/space          +5 pts/space
-    //  150–749     +4 pts/space          +6 pts/space
-    //  750–999     +5 pts/space          +7 pts/space
+    //  1–5         30 pts (base floor)   45 pts (base floor)
+    //  6–150       +3 pts/space          +5 pts/space
+    //  151–750     +4 pts/space          +6 pts/space
+    //  751–1000    +5 pts/space          +7 pts/space
     //  1,001+      +20 pts/space         +20 pts/space  (excess over 1,000)
     //
-    // Example (below, 5 spaces):  30 + (1 × 3) = 33
-    // Example (above, 5 spaces):  45 + (1 × 5) = 50
+    // Example (below, 6 spaces):  30 + (1 × 3) = 33
+    // Example (above, 6 spaces):  45 + (1 × 5) = 50
     //
     function calculateLandscapingPoints(spaces, isAboveThreshold) {
       let pointsCount = 0;
@@ -1732,44 +1797,44 @@
       // Band 1–4: flat base minimum
       const base = isAboveThreshold ? 45 : 30;
       pointsCount += base;
-      breakdown.push(`Base Minimum (1–4 spaces): ${base} Points`);
+      breakdown.push(`Base Minimum (1–5 spaces): ${base} Points`);
 
       // Band 5–149: 3 or 5 pts per space in this range
-      if (spaces >= 5) {
-        const inBand = Math.min(spaces, 149) - 4;   // e.g. spaces=5 → 1; spaces=149 → 145
+      if (spaces >= 6) {
+        const inBand = Math.min(spaces, 150) - 5;   // e.g. spaces=5 → 1; spaces=149 → 145
         const rate   = isAboveThreshold ? 5 : 3;
         const pts    = inBand * rate;
         pointsCount += pts;
         breakdown.push(
-          `Spaces 5–${Math.min(spaces, 149)} (${inBand} space${inBand !== 1 ? 's' : ''} × ${rate} pts/space): ${pts} Points`
+          `Spaces 6–${Math.min(spaces, 150)} (${inBand} space${inBand !== 1 ? 's' : ''} × ${rate} pts/space): ${pts} Points`
         );
       }
 
       // Band 150–749: 4 or 6 pts per space in this range
-      if (spaces >= 150) {
-        const inBand = Math.min(spaces, 749) - 149; // e.g. spaces=150 → 1; spaces=749 → 600
+      if (spaces >= 151) {
+        const inBand = Math.min(spaces, 750) - 150; // e.g. spaces=150 → 1; spaces=749 → 600
         const rate   = isAboveThreshold ? 6 : 4;
         const pts    = inBand * rate;
         pointsCount += pts;
         breakdown.push(
-          `Spaces 150–${Math.min(spaces, 749)} (${inBand} space${inBand !== 1 ? 's' : ''} × ${rate} pts/space): ${pts} Points`
+          `Spaces 151–${Math.min(spaces, 750)} (${inBand} space${inBand !== 1 ? 's' : ''} × ${rate} pts/space): ${pts} Points`
         );
       }
 
       // Band 750–999: 5 or 7 pts per space in this range
-      if (spaces >= 750) {
-        const inBand = Math.min(spaces, 999) - 749; // e.g. spaces=750 → 1; spaces=999 → 250
+      if (spaces >= 751) {
+        const inBand = Math.min(spaces, 1000) - 750; // e.g. spaces=750 → 1; spaces=999 → 250
         const rate   = isAboveThreshold ? 7 : 5;
         const pts    = inBand * rate;
         pointsCount += pts;
         breakdown.push(
-          `Spaces 750–${Math.min(spaces, 999)} (${inBand} space${inBand !== 1 ? 's' : ''} × ${rate} pts/space): ${pts} Points`
+          `Spaces 751–${Math.min(spaces, 1000)} (${inBand} space${inBand !== 1 ? 's' : ''} × ${rate} pts/space): ${pts} Points`
         );
       }
 
       // Band 1,000+: 20 pts per space from 1,000 onwards
-      if (spaces >= 1000) {
-        const inBand = spaces - 999;
+      if (spaces > 1000) {
+        const inBand = spaces - 1000;
         const pts    = inBand * 20;
         pointsCount += pts;
         breakdown.push(
@@ -2152,6 +2217,7 @@
       "Spectator Sports and Entertainment, High Impact": 10,
       "Stockyards": 6,
       "Supportive Housing": 2,
+      "Urban Agriculture": 2,
       "Underground Injection Well": 2,
       "Undertaking": 4,
       "Vehicle Auction": 6,
@@ -2160,8 +2226,6 @@
       "Warehouse, Commercial": 2,
       "Use Not Otherwise Specified": 2,
 
-      "Sales and Rentals, Farm and Heavy Vehicles and Equipment": 6,
-      "Sales and Rentals, Manufactured (Mobile) Homes": 6,
       "Wholesaling, Storage and Distribution, General": 2
     };
 
@@ -2204,14 +2268,7 @@
       "RL-LI": "Rural"
     };
     const ZONE_MINIMUM_RATES = Object.fromEntries(
-      Object.entries(ZONE_GROUPS).map(([zone, group]) => [
-        zone,
-        zone.endsWith("-DT") || zone.endsWith("-MX")
-          ? 0
-          : group === "Urban High" || group === "Urban Medium"
-            ? 0.75
-            : 1
-      ])
+      Object.keys(ZONE_GROUPS).map(zone => [zone, zone.startsWith("DD-") || zone.endsWith("-MX") ? 0 : null])
     );
     const ZONE_LUTA_GROUPS = Object.fromEntries(
       Object.entries(ZONE_GROUPS).map(([zone, group]) => [
@@ -2238,9 +2295,7 @@
       { min: 0, label: "Under 5,000 sf", values: { "Downtown/Urban High": .750, "Urban Medium": .900, "Urban Low & Rural": 1.000 } }
     ];
     const RESIDENTIAL_LUTA_MULTIPLIERS = {
-      "Downtown/Urban High": .750,
-      "Urban Medium": .900,
-      "Urban Low & Rural": 1.000
+      "Downtown/Urban High": 1, "Urban Medium": 1, "Urban Low & Rural": 1
     };
     const OPTION_RENAMES = {
       "Aboveground Flammable Liquid Storage": "Aboveground Flammable Storage",
@@ -2275,150 +2330,155 @@
 
     const STATIC_CODE_CITATIONS = {
       dwellingUnits: [{
-        reference: "59-44.C.4.b.i — Residential Uses",
+        reference: "59-91.C.4.b.i — Residential Uses",
         section: "C",
         quote: "The number of residential dwellings shall be entered into the base ratio calculator to determine the base ratio, regardless of whether the dwelling has a minimum parking requirement."
       }],
       floorArea: [{
-        reference: "59-44.C.4.a — Non-residential Uses",
+        reference: "59-91.C.4.a — Non-residential Uses",
         section: "C",
-        quote: "Non-residential uses are assigned a base ratio based on the number of parking spaces expected to be needed per 1,000 square feet of gross-floor area, including fixed outdoor display areas constructed initially or added to the site with a building permit. The category for each non-residential use is identified in Table 59-44.1a."
+        quote: "Non-residential uses are assigned a base ratio based on the number of parking spaces expected to be needed per 1,000 square feet of gross-floor area, including fixed outdoor display areas constructed initially or added to the site with a building permit. The category for each non-residential use is identified in Table 59-91.2A."
       }],
       standardSpaces: [{
-        reference: "59-44.E.3.a — Landscape Requirements Based on Threshold",
+        reference: "59-91.E.3.a — Landscape Requirements Based on Threshold",
         section: "E",
         quote: "If the number of spaces to be constructed is at or below the parking threshold, the parking area shall meet the landscape requirements in column 2. When the threshold is exceeded, a parking area shall meet the landscape requirements in column 3."
       }],
       structuredSpaces: [{
-        reference: "59-44.A.4.a — Parking Garages",
+        reference: "59-91.A.4.a — Parking Garages",
         section: "A",
-        quote: "Structured off-street parking (i.e. parking garages/parking decks) are exempt from this Section."
+        quote: "Structured off-street parking (i.e. parking garages/parking decks) are exempt from the landscape requirements of this section."
       }],
       perviousSpaces: [{
-        reference: "59-44.C.4.i — Spaces with Pervious Paving",
+        reference: "59-91.C.4.i — Spaces with Pervious Paving",
         section: "C",
         quote: "Spaces with pervious surfaces that are constructed to City pervious paving standards count as .5 (half) of a space for calculating the threshold, although they count as a full space for meeting a residential requirement."
       }],
       evseSpaces: [{
-        reference: "59-44.C.4.j — Spaces with Electric Vehicle Charging Stations",
+        reference: "59-91.C.4.j — Spaces with Electric Vehicle Charging Stations",
         section: "C",
         quote: "Each space with access to an installed Electric Vehicle Charging Station (EVSE Space) shall be counted as 0.25 of a parking space, and each EV-Ready Space shall be counted as .5 (half) of a parking space. Where the resulting total parking count ends in a fraction, the count shall be rounded down to the next whole number. Each EVSE Space and each EV-Ready Space shall otherwise count as one (1) parking space for all other purposes of this Chapter, including for meeting a residential parking requirement."
       }],
       evReadySpaces: [{
-        reference: "59-44.C.4.j — Spaces with Electric Vehicle Charging Stations",
+        reference: "59-91.C.4.j — Spaces with Electric Vehicle Charging Stations",
         section: "C",
         quote: "Each space with access to an installed Electric Vehicle Charging Station (EVSE Space) shall be counted as 0.25 of a parking space, and each EV-Ready Space shall be counted as .5 (half) of a parking space. Where the resulting total parking count ends in a fraction, the count shall be rounded down to the next whole number. Each EVSE Space and each EV-Ready Space shall otherwise count as one (1) parking space for all other purposes of this Chapter, including for meeting a residential parking requirement."
       }],
       motorcycleSpaces: [{
-        reference: "59-44.C.4.m — Motorcycle Parking Spaces",
+        reference: "59-91.C.4.m — Motorcycle Parking Spaces",
         section: "C",
         quote: "For the purposes of determining threshold levels, a motorcycle space is counted the same as a vehicle parking space."
       }],
       stackingSpaces: [{
-        reference: "59-44.C.4.f — Drive-through Facilities",
+        reference: "59-91.C.4.f — Drive-through Facilities",
         section: "C",
         quote: "Each Drive-through stacking space shall be counted as a parking space in the threshold calculation."
       }],
       queuingSpaces: [{
-        reference: "59-44.C.4.g — Passenger Drop-off/Loading Areas",
+        reference: "59-91.C.4.g — Passenger Drop-off/Loading Areas",
         section: "C",
         quote: "Each queuing space shall be counted as a parking space in the threshold calculations."
       }],
       loadingSpaces: [{
-        reference: "59-44.C.4.h — Off-street Loading Areas",
+        reference: "59-91.C.4.h — Off-street Loading Areas",
         section: "C",
         quote: "Each loading space, regardless of size, shall be counted as one parking space in the threshold calculations."
       }],
       sharedSpaces: [{
-        reference: "59-44.C.4.l — Shared Parking",
+        reference: "59-91.C.4.l — Shared Parking",
         section: "C",
         quote: "Off-site spaces designated under a shared use agreement are not counted for purposes of determining threshold levels."
       }],
       parallelSpaces: [{
-        reference: "59-44.C.4.d — On-Street Parking",
+        reference: "59-91.C.1.e; C.4.d — On-Street Parking",
         section: "C",
-        quote: "Spaces that are parallel to a street are not counted and not assigned a base threshold. Spaces along a street that are angled and approved by Traffic Commission default to the \"Above Threshold\" category. Landscaping for these spaces shall be met separately from the landscape requirements for on-site spaces."
+        quote: "On-street spaces that meet residential parking requirements are excluded from the threshold count. Residential credit requires striped parking on an improved street, within 200 feet of the dwelling building, and pedestrian access. Angled spaces require Traffic Commission approval; perpendicular spaces do not qualify."
       }],
       angledSpaces: [{
-        reference: "59-44.C.4.d — On-Street Parking",
+        reference: "59-91.C.1.e; C.4.d — On-Street Parking",
         section: "C",
-        quote: "Spaces that are parallel to a street are not counted and not assigned a base threshold. Spaces along a street that are angled and approved by Traffic Commission default to the \"Above Threshold\" category. Landscaping for these spaces shall be met separately from the landscape requirements for on-site spaces."
+        quote: "On-street spaces that meet residential parking requirements are excluded from the threshold count. Residential credit requires striped parking on an improved street, within 200 feet of the dwelling building, and pedestrian access. Angled spaces require Traffic Commission approval; perpendicular spaces do not qualify."
       }],
       fabricShadeSpaces: [{
-        reference: "59-44.E.4.a — Shade Structures",
+        reference: "59-91.E.4.a — Shade Structures",
         section: "E",
-        quote: "Each Parking Space located entirely under a fabric or light-color shade structure may reduce the Parking Area Landscape Points by 5. Each Parking Space entirely under a shade structure with a solar panel roof may reduce the Parking Area landscape points by 10."
+        quote: "Each Parking Space located entirely under a fabric or light-color shade structure may reduce the Parking Area Landscape Points by 5. A Solar Energy System may serve as the roof of a qualifying shade structure or be integrated into its roof."
       }, {
-        reference: "59-44.E.4 — Substitution for Required Parking Area points",
+        reference: "59-91.E.4 — Substitution for Required Parking Area points",
         section: "E",
         quote: "The maximum substitution allowed for any one or a combination of methods below is 50% of required Parking Area points. Any point substitution calculations shall be shown on the Building Permit Landscape Plan."
       }],
       solarShadeSpaces: [{
-        reference: "59-44.E.4.a — Shade Structures",
+        reference: "59-91.E.4.a — Shade Structures",
         section: "E",
-        quote: "Each Parking Space located entirely under a fabric or light-color shade structure may reduce the Parking Area Landscape Points by 5. Each Parking Space entirely under a shade structure with a solar panel roof may reduce the Parking Area landscape points by 10."
+        quote: "Each Parking Space located entirely under a fabric or light-color shade structure may reduce the Parking Area Landscape Points by 5. A Solar Energy System may serve as the roof of a qualifying shade structure or be integrated into its roof."
       }, {
-        reference: "59-44.E.4 — Substitution for Required Parking Area points",
+        reference: "59-91.E.4 — Substitution for Required Parking Area points",
         section: "E",
         quote: "The maximum substitution allowed for any one or a combination of methods below is 50% of required Parking Area points. Any point substitution calculations shall be shown on the Building Permit Landscape Plan."
       }],
       lidArea: [{
-        reference: "59-44.E.4.c — Stormwater Infiltration Areas",
+        reference: "59-91.E.4.c — Stormwater Infiltration Areas",
         section: "E",
         quote: "Low Impact Development (LID) designs that meet the Storm Water Quality Best Management Practices Manual may subtract 15 Parking Area points for every 500 square feet of functioning biofiltration area / LID systems, including but not limited to rain gardens, bioswales, and bioretention cells, shall:"
       }, {
-        reference: "59-44.E.4 — Substitution for Required Parking Area points",
+        reference: "59-91.E.4 — Substitution for Required Parking Area points",
         section: "E",
         quote: "The maximum substitution allowed for any one or a combination of methods below is 50% of required Parking Area points. Any point substitution calculations shall be shown on the Building Permit Landscape Plan."
       }],
       treePoints: [{
-        reference: "59-44.E.4.b — Existing Trees Preserved on Site",
+        reference: "59-91.E.4.b — Existing Trees Preserved on Site",
         section: "E",
-        quote: "Existing Significant Trees that are preserved in a Parking Area shall receive extra points per Table 59-38.2."
+        quote: "Existing Significant Trees that are preserved in a Parking Area shall receive extra points per Sec. 59-86."
       }, {
-        reference: "59-44.E.4 — Substitution for Required Parking Area points",
+        reference: "59-91.E.4 — Substitution for Required Parking Area points",
         section: "E",
         quote: "The maximum substitution allowed for any one or a combination of methods below is 50% of required Parking Area points. Any point substitution calculations shall be shown on the Building Permit Landscape Plan."
       }],
-      accessibleSpaces: [{
-        reference: "59-44.O.1 — Accessible Parking Spaces Required",
+      accessibleExemption: [{
+        reference: "59-91.O.2 — Accessible Parking Exemptions",
         section: "O",
-        quote: "Parking spaces for vehicles with handicapped drivers shall be provided in accordance with Table 59-44.O.1 and the International Building Code as adopted by The City of Oklahoma City."
+        quote: "Construction of a single dwelling, accessory dwelling or a duplex are exempt from the Accessible Parking space requirements."
+      }],
+      accessibleSpaces: [{
+        reference: "59-91.O.1 — Accessible Parking Spaces Required",
+        section: "O",
+        quote: "Parking spaces for vehicles with handicapped drivers shall be provided in accordance with Table 59-91.5 and the International Building Code as adopted by The City of Oklahoma City."
       }],
       bicycleSpaces: [{
-        reference: "59-44.D.1 — Minimum Bicycle Spaces",
+        reference: "59-91.D.1 — Minimum Bicycle Spaces",
         section: "D",
         quote: "For parking lots greater than 10 spaces, a minimum of two bicycle spaces shall be provided. Each additional 50 vehicle spaces shall require one additional bike space, up to 10 required bicycle spaces."
       }],
       compactSpaces: [{
-        reference: "59-44.J.1.c — Small Car Parking",
+        reference: "59-91.J.1.c — Small Car Parking",
         section: "J",
         quote: "Where a parking area is greater than 20 spaces, compact vehicle parking is allowed for up to 15 percent of the spaces provided."
       }],
       parkingAreaDesign: [{
-        reference: "59-44.F.1 — General Design Requirements",
+        reference: "59-91.F.1 — General Design Requirements",
         section: "F",
-        quote: "All other Parking Areas shall meet the requirements for medium or large trees, terminal islands, interior islands, landscaped medians, pedestrian walkway medians, and consolidated tree planting areas."
+        quote: "Single-dwelling, duplex, and three- or four-dwelling parcels require at least 2 trees at or below the threshold, or 3 above it, including street-side tree placement. Other parking areas follow the general tree, island, and median requirements."
       }]
     };
 
     const PARKING_FIELD_TREATMENTS = {
-      standardSpaces: "§ 59-44.E.3.a",
-      structuredSpaces: "§ 59-44.A.4.a",
-      perviousSpaces: "§ 59-44.C.4.i",
-      evseSpaces: "§ 59-44.C.4.j",
-      evReadySpaces: "§ 59-44.C.4.j",
-      motorcycleSpaces: "§ 59-44.C.4.m",
-      stackingSpaces: "§ 59-44.C.4.f",
-      queuingSpaces: "§ 59-44.C.4.g",
-      loadingSpaces: "§ 59-44.C.4.h",
-      sharedSpaces: "§ 59-44.C.4.l",
-      parallelSpaces: "§ 59-44.C.4.d",
-      angledSpaces: "§ 59-44.C.4.d",
-      fabricShadeSpaces: "§ 59-44.E.4.a",
-      solarShadeSpaces: "§ 59-44.E.4.a",
-      lidArea: "§ 59-44.E.4.c",
-      treePoints: "§ 59-44.E.4.b"
+      standardSpaces: "§ 59-91.E.3.a",
+      structuredSpaces: "§ 59-91.A.4.a",
+      perviousSpaces: "§ 59-91.C.4.i",
+      evseSpaces: "§ 59-91.C.4.j",
+      evReadySpaces: "§ 59-91.C.4.j",
+      motorcycleSpaces: "§ 59-91.C.4.m",
+      stackingSpaces: "§ 59-91.C.4.f",
+      queuingSpaces: "§ 59-91.C.4.g",
+      loadingSpaces: "§ 59-91.C.4.h",
+      sharedSpaces: "§ 59-91.C.4.l",
+      parallelSpaces: "§ 59-91.C.4.d",
+      angledSpaces: "§ 59-91.C.4.d",
+      fabricShadeSpaces: "§ 59-91.E.4.a",
+      solarShadeSpaces: "§ 59-91.E.4.a",
+      lidArea: "§ 59-91.E.4.c",
+      treePoints: "§ 59-91.E.4.b"
     };
 
     function landUseCodeCitation(select) {
@@ -2426,69 +2486,44 @@
       const type = useType(use);
       if (use === "Parking Lot as a Principal Use") {
         return [{
-          reference: "59-44.C.4.e — Parking Lot as a Principal Use",
+          reference: "59-91.C.4.e — Parking Lot as a Principal Use",
           section: "C",
           quote: "This use defaults to the \"Above Threshold\" category."
         }];
       }
       if (use === "Use Not Otherwise Specified") {
         return [{
-          reference: "59-44.C.4.p — Uses Not Otherwise Specified",
+          reference: "59-91.C.4.o — Uses Not Otherwise Specified",
           section: "C",
-          quote: "Uses not specifically listed in Table 59-44.1a shall default to a base ratio of 2.0 unless the Planning Director determines that the proposed use is substantially similar in parking generation characteristics to a listed use with a different base ratio."
+          quote: "Uses not specifically listed in Table 59-91.2A shall default to a base ratio of 2.0 unless the Planning Director determines that the proposed use is substantially similar in parking generation characteristics to a listed use with a different base ratio."
         }];
       }
       if (type === "residential") {
         return [{
-          reference: "59-44.C.4.b — Residential Uses",
+          reference: "59-91.C.4.b — Residential Uses",
           section: "C",
           quote: "Residential uses, including detached dwellings, two, three or four-dwelling uses, and apartments and townhomes are assigned to their base ratio with the number of dwellings."
         }];
       }
       if (type === "mixed") {
         return [{
-          reference: "59-44.C.4.c — Mixed-Use Developments",
+          reference: "59-91.C.4.c — Mixed-Use Developments",
           section: "C",
           quote: "For threshold calculations, each component (residential and non-residential) is calculated separately using their respective base ratios and Land Use Typology Area (LUTA) Multipliers, then combined to determine the total parking threshold for the development."
         }];
       }
       return [{
-        reference: "59-44.C.4.a — Non-residential Uses",
+        reference: "59-91.C.4.a — Non-residential Uses",
         section: "C",
-        quote: "Non-residential uses are assigned a base ratio based on the number of parking spaces expected to be needed per 1,000 square feet of gross-floor area, including fixed outdoor display areas constructed initially or added to the site with a building permit. The category for each non-residential use is identified in Table 59-44.1a."
+        quote: "Non-residential uses are assigned a base ratio based on the number of parking spaces expected to be needed per 1,000 square feet of gross-floor area, including fixed outdoor display areas constructed initially or added to the site with a building permit. The category for each non-residential use is identified in Table 59-91.2A."
       }];
     }
 
     function lutaCodeCitation(select) {
-      const zone = select.value;
-      const blocks = [{
-        reference: "59-44.C.3.c — LUTA Multiplier",
-        section: "C",
-        quote: "The Land Use Typology Area (LUTA) Multiplier is described in Table 59-44.2. The LUTA Multiplier adjusts the base parking threshold ratios to reflect differences in urban form, transportation context, and land use intensity across the city. This adjustment ensures that parking is context-sensitive and responsive to the surrounding land use typology.",
-        note: zone ? `Calculator mapping: ${zone} → ${ZONE_GROUPS[zone]} → ${ZONE_LUTA_GROUPS[zone]}.` : ""
-      }];
-      if (!zone) return blocks;
-      const rate = ZONE_MINIMUM_RATES[zone];
-      if (rate === 0) {
-        blocks.push({
-          reference: "59-44.C.2.b.iii — Residential Spaces Required",
-          section: "C",
-          quote: "Dwellings in any DT or MX zone are exempt from residential minimum parking requirements."
-        });
-      } else if (rate === .75) {
-        blocks.push({
-          reference: "59-44.C.2.b.ii — Residential Spaces Required",
-          section: "C",
-          quote: "The minimum parking requirement for any dwellings constructed with an UH or UM zone shall be .75 parking spaces per dwelling, rounded up to the nearest whole number."
-        });
-      } else {
-        blocks.push({
-          reference: "59-44.C.2.b.i — Residential Spaces Required",
-          section: "C",
-          quote: "The minimum parking requirement for any Residential use shall be one (1) parking space per dwelling. Accessory dwellings may have different requirements as described in Use Regulations for Accessory Dwellings."
-        });
-      }
-      return blocks;
+      return [{ reference: "Table 59-91.3 — LUTA Multiplier", section: "C",
+        quote: "Residential uses have a 1.00 multiplier in every LUTA. Nonresidential multipliers depend on gross floor area and LUTA." },
+        { reference: "59-91.C.2 — Residential Spaces Required", section: "C",
+        quote: "Single and manufactured dwellings require 2 spaces per dwelling. Other dwellings use Table 59-91.1, summed before rounding up. Streets less than 26 feet wide require at least 1 space per dwelling. Dwellings in DD or MX zones are exempt. Accessory dwelling minimums are addressed in Sec. 59-96." }];
     }
 
     function citationKeyFor(element) {
@@ -2687,15 +2722,8 @@
     }
 
     function updateLutaInfo() {
-      const selection = document.getElementById("luta").value;
-      const luta = resolveLuta(selection);
-      const rate = ZONE_MINIMUM_RATES[selection];
-      const text = !selection
-        ? ""
-        : rate === 0
-          ? `${luta}; no residential minimum`
-          : `${luta}; ${displayNumber(rate)} space${rate === 1 ? "" : "s"} per dwelling`;
-      document.getElementById("lutaInfo").textContent = text;
+      const zone = document.getElementById("luta").value;
+      document.getElementById("lutaInfo").textContent = !zone ? "" : `${resolveLuta(zone)}${ZONE_MINIMUM_RATES[zone] === 0 ? "; no residential minimum" : ""}`;
     }
 
     function updatePrimaryFields() {
@@ -2703,10 +2731,10 @@
       const type = useType(use);
       const hasUse = Boolean(use);
       const isParking = type === "parking";
-      setVisible(document.getElementById("dwellingUnitsContainer"), hasUse && (type === "residential" || type === "mixed"));
+      setVisible(document.getElementById("dwellingUnitsContainer"), hasUse && isSingleDwellingUse(use));
       setVisible(document.getElementById("mixedUseNonResContainer"), hasUse && type === "mixed");
       setVisible(document.getElementById("floorAreaContainer"), hasUse && (type === "nonresidential" || type === "mixed"));
-      setVisible(document.getElementById("lutaContainer"), hasUse);
+      setVisible(document.getElementById("lutaContainer"), true);
       setVisible(document.getElementById("totalSiteAreaContainer"), hasUse);
       document.getElementById("useInfo").textContent =
         type === "residential" ? "Residential threshold: 2.0 per dwelling" :
@@ -2732,6 +2760,7 @@
       }
       const oldWrapper = document.getElementById("landscapingWrapper");
       if (oldWrapper) oldWrapper.remove();
+      updateResidentialControls(document.getElementById("primaryComponent"), use);
       updateLutaInfo();
     }
 
@@ -2787,12 +2816,13 @@
       mixedInfo.className = "info component-mixed-info";
       mixedRow.append(mixedLabel, mixedSelect, mixedInfo);
 
-      wrapper.append(header, useRow, duRow, mixedRow, gfaRow);
+      wrapper.append(header, useRow, duRow, buildResidentialControls(`component${id}`), mixedRow, gfaRow);
       document.getElementById("extraComponents").appendChild(wrapper);
 
       const update = () => {
         const type = useType(useSelect.value);
-        setVisible(duRow, type === "residential" || type === "mixed");
+        updateResidentialControls(wrapper, useSelect.value);
+        setVisible(duRow, type === "residential" && isSingleDwellingUse(useSelect.value));
         setVisible(gfaRow, type === "nonresidential" || type === "mixed");
         setVisible(mixedRow, type === "mixed");
         const rate = POLICY_BASE_RATES[useSelect.value];
@@ -2816,7 +2846,7 @@
       };
       useSelect.addEventListener("change", update);
       mixedSelect.addEventListener("change", update);
-      duRow.querySelector("input").addEventListener("input", invalidateFromProjectInputs);
+      duRow.querySelector("input").addEventListener("input", () => { updateResidentialControls(wrapper,useSelect.value); invalidateFromProjectInputs(); });
       gfaRow.querySelector("input").addEventListener("input", invalidateFromProjectInputs);
       enhanceGroupedSelect(useSelect);
       enhanceGroupedSelect(mixedSelect);
@@ -2864,6 +2894,16 @@
           gfa: component.querySelector(".component-gfa input").value,
           mixedUse: component.querySelector(".component-mixed").value
         });
+      });
+      components.forEach((component, i) => {
+        const root = i === 0 ? document.getElementById("primaryComponent") : document.querySelectorAll(".extra-component")[i - 1];
+        component.sizes = Array.from(root.querySelectorAll(".dwelling-size-grid input"), input => nonnegativeInteger(input.value || "0"));
+        if (["residential", "mixed"].includes(useType(component.use)) && !isSingleDwellingUse(component.use)) {
+          component.du = countDwellingSizes(component.sizes);
+        }
+        component.narrow = root.querySelector(".narrow-street").checked;
+        component.aduSmall = root.querySelector(".adu-small").checked;
+        component.aduLarge = root.querySelector(".adu-large").checked;
       });
       return components;
     }
@@ -2983,7 +3023,7 @@
     function populateReferenceTables() {
       const baseRatioCitation = {
         ...landUseCodeCitation({ value: "Retail Sales" })[0],
-        reference: "Table 59-44.1a — Non-residential Base Ratios"
+        reference: "Table 59-91.2A — Non-residential Base Ratios"
       };
       const residentialCitation = landUseCodeCitation({ value: "Dwelling, Single or Manufactured" })[0];
       const baseRows = [
@@ -2996,12 +3036,12 @@
       ];
       document.getElementById("baseRatioReferenceBody").innerHTML = baseRows.join("");
       const baseReference = document.getElementById("baseRatioReferenceCitation");
-      baseReference.textContent = "[Tables 59-44.1a–b]";
+      baseReference.textContent = "[Tables 59-91.2A–B]";
       baseReference.title = citationPlainText([baseRatioCitation, residentialCitation]);
 
       const multiplierCitation = {
         ...lutaCodeCitation({ value: "" })[0],
-        reference: "Table 59-44.2 — LUTA Multipliers"
+        reference: "Table 59-91.3 — LUTA Multipliers"
       };
       const multiplierRows = [
         `<tr><td>Residential uses</td><td class="numeric">${displayMultiplier(RESIDENTIAL_LUTA_MULTIPLIERS["Downtown/Urban High"])}</td><td class="numeric">${displayMultiplier(RESIDENTIAL_LUTA_MULTIPLIERS["Urban Medium"])}</td><td class="numeric">${displayMultiplier(RESIDENTIAL_LUTA_MULTIPLIERS["Urban Low & Rural"])}</td></tr>`,
@@ -3011,19 +3051,19 @@
       ];
       document.getElementById("multiplierReferenceBody").innerHTML = multiplierRows.join("");
       const multiplierReference = document.getElementById("multiplierReferenceCitation");
-      multiplierReference.textContent = "[Table 59-44.2]";
+      multiplierReference.textContent = "[Table 59-91.3]";
       multiplierReference.title = citationPlainText([multiplierCitation]);
 
-      document.getElementById("zoneMinimumReferenceBody").innerHTML =
-        Object.entries(ZONE_GROUPS).map(([zone]) => {
-          return `<tr><td>${escapeHtml(zone)}</td><td class="numeric">${displayRate(ZONE_MINIMUM_RATES[zone])}</td></tr>`;
-        }).join("");
-      const zoneCitations = ["DD-DT", "UM-SD", "UL-SD"]
-        .map(zone => lutaCodeCitation({ value: zone })[1])
-        .filter(Boolean);
+      document.getElementById("zoneMinimumReferenceBody").innerHTML = `
+        <tr><td>Single / manufactured dwelling</td><td class="numeric">2</td></tr>
+        <tr><td>Other dwelling: ≤600 sf</td><td class="numeric">0.50</td></tr>
+        <tr><td>Other dwelling: 601–1,250 sf</td><td class="numeric">0.75</td></tr>
+        <tr><td>Other dwelling: &gt;1,250 sf</td><td class="numeric">1.50</td></tr>
+        <tr><td>Street pavement &lt;26 feet</td><td class="numeric">At least 1</td></tr>
+        <tr><td>DD or MX zone</td><td class="numeric">Exempt</td></tr>`;
       const zoneReference = document.getElementById("zoneMinimumReferenceCitation");
-      zoneReference.textContent = "[§ 59-44.C.2.b]";
-      zoneReference.title = citationPlainText(zoneCitations);
+      zoneReference.textContent = "[§ 59-91.C.2; Table 59-91.1]";
+      zoneReference.title = citationPlainText([lutaCodeCitation({value:""})[1]]);
     }
 
     function showFormErrors(errors) {
@@ -3034,265 +3074,96 @@
     }
 
     function calculateProject() {
-      const lutaOrZone = document.getElementById("luta").value;
-      const luta = resolveLuta(lutaOrZone);
-      const zone = ZONE_GROUPS[lutaOrZone] ? lutaOrZone : "";
-      const components = getProjectComponents();
-      const errors = [];
-      const manualReview = [];
-      const ledger = [];
-      const thresholdTotals = [];
-      let residentialUnits = 0;
-      let threshold = 0;
-      let hasParkingPrincipal = false;
-      let hasThresholdBlocker = false;
-      const dwellingCitation = STATIC_CODE_CITATIONS.dwellingUnits[0];
-      const floorAreaCitation = STATIC_CODE_CITATIONS.floorArea[0];
-      const multiplierCitation = lutaCodeCitation({ value: lutaOrZone })[0];
-      const minimumCitation = lutaCodeCitation({ value: lutaOrZone })[1] || null;
-      const residentialThresholdCitation = landUseCodeCitation({ value: "Dwelling, Single or Manufactured" })[0];
-
-      if (!components[0].use) errors.push("Select at least one land use.");
-      const nonblank = components.filter(component => component.use);
-      if (nonblank.length && !lutaOrZone) {
-        errors.push("Select a LUTA or zoning district.");
-      }
-      if (nonblank.some(component => component.use === "Parking Lot as a Principal Use") && nonblank.length > 1) {
-        errors.push("Parking Lot as a Principal Use must be calculated by itself.");
-      }
-
-      nonblank.forEach((component) => {
-        const label = component.use;
-        const type = useType(component.use);
-        if (type === "parking") {
-          hasParkingPrincipal = true;
-          ledger.push(calculationStep(
-            "Parking Threshold",
-            [],
-            0,
-            0,
-            `${label} is classified as above the parking threshold by default.`,
-            landUseCodeCitation({ value: component.use })[0]
-          ));
-          return;
-        }
-        if (type === "residential") {
+      const zone = document.getElementById("luta").value;
+      const luta = resolveLuta(zone);
+      const components = getProjectComponents().filter(component => component.use);
+      const errors = [], ledger = [], totals = [], minimumTerms = [], reviews = [];
+      let threshold = 0, rawMinimum = 0, residentialUnits = 0;
+      const hasParkingPrincipal = components.some(component => component.use === "Parking Lot as a Principal Use");
+      calculatedAduReview = false;
+      if (!document.getElementById("landUse").value) errors.push("Select at least one land use.");
+      if (!zone) errors.push("Select a LUTA or zoning district.");
+      errors.push(...validateExistingWork(readExistingWork()));
+      if (hasParkingPrincipal && components.length > 1) errors.push("Parking Lot as a Principal Use must be calculated by itself.");
+      const exempt = ZONE_MINIMUM_RATES[zone] === 0;
+      const minimumCitation = lutaCodeCitation({value:zone})[1];
+      components.forEach(component => {
+        const type = useType(component.use), label = component.use;
+        if (type === "parking") return;
+        if (type === "residential" || type === "mixed") {
           const du = positiveInteger(component.du);
-          if (du === null) {
-            errors.push(`${label}: enter dwelling units as a whole number greater than zero.`);
-            return;
-          }
+          if (du === null) { errors.push(isSingleDwellingUse(label) ? `${label}: enter a whole number of dwellings greater than zero.` : `${label}: enter whole numbers of zero or greater in the three size inputs, with at least one dwelling.`); return; }
+          const single = isSingleDwellingUse(label);
+          const adu = supportsAdu(label) && (component.aduSmall || component.aduLarge);
+          if (adu && single && du !== 1) errors.push(`${label}: ADU checkboxes apply to one principal dwelling.`);
+          const thresholdDwellings = countThresholdDwellings(component);
           residentialUnits += du;
-          const multiplier = RESIDENTIAL_LUTA_MULTIPLIERS[luta];
-          const raw = du * RESIDENTIAL_THRESHOLD_RATE * multiplier;
-          const subtotal = Math.ceil(raw);
-          threshold += subtotal;
-          thresholdTotals.push({ label, value: subtotal });
-          ledger.push(calculationStep(
-            `Parking Threshold — ${label}`,
-            [
-              calculationFactor(`${du.toLocaleString()} dwellings`, dwellingCitation),
-              calculationFactor(equationFraction(`${displayRate(RESIDENTIAL_THRESHOLD_RATE)} parking spaces`, "dwelling"), residentialThresholdCitation),
-              calculationFactor(`${displayNumber(multiplier)} LUTA multiplier`, multiplierCitation)
-            ],
-            raw,
-            subtotal
-          ));
-          return;
+          const resThreshold = thresholdDwellings * RESIDENTIAL_THRESHOLD_RATE;
+          threshold += resThreshold;
+          totals.push({label: type === "mixed" ? `${label} Residential` : label, value:resThreshold});
+          ledger.push(calculationStep(`Parking Threshold — ${label}${type === "mixed" ? " Residential" : ""}`,
+            [calculationFactor(`${thresholdDwellings} counted dwellings`, STATIC_CODE_CITATIONS.dwellingUnits[0]),
+             calculationFactor("2 spaces per dwelling",landUseCodeCitation({value:label})[0]),
+             calculationFactor("1.00 LUTA multiplier",lutaCodeCitation({value:zone})[0])], resThreshold,resThreshold));
+          if (!exempt) {
+            if (single) {
+              const value = du * 2; rawMinimum += value;
+              minimumTerms.push(`${du} single / manufactured dwelling${du === 1 ? "" : "s"} × 2 = ${value}`);
+            } else {
+              const sizes=component.sizes;
+              {
+                const rates=component.narrow ? [1,1,1.5] : [.5,.75,1.5];
+                const value=sizes.reduce((sum,count,i)=>sum+count*rates[i],0);
+                rawMinimum += value;
+                minimumTerms.push(`${label}: ${sizes.map((n,i)=>`${n} × ${rates[i]}`).join(" + ")} = ${displayNumber(value)}${component.narrow ? " (street <26 feet)" : ""}`);
+              }
+            }
+            if (adu) {
+              calculatedAduReview = true;
+              reviews.push("Accessory-dwelling minimum: review § 59-96. The minimum shown covers the primary dwellings.");
+            }
+          }
         }
-        if (type === "nonresidential") {
+        if (type === "nonresidential" || type === "mixed") {
+          const use = type === "mixed" ? component.mixedUse : component.use;
           const gfa = positiveInteger(component.gfa);
-          if (gfa === null) {
-            errors.push(`${label}: enter gross floor area as a whole number greater than zero.`);
-            return;
-          }
-          const rate = POLICY_BASE_RATES[component.use];
-          if (rate === null || rate === undefined) {
-            hasThresholdBlocker = true;
-            manualReview.push(`${label}: The draft table does not provide a usable rate.`);
-            return;
-          }
-          if (component.use === "Use Not Otherwise Specified") {
-            manualReview.push(`${label}: The draft defaults this use to 2.0 unless the Planning Director determines that a listed use with a different rate is substantially similar.`);
-          }
-          const record = floorMultiplierRecord(gfa, luta);
-          const multiplier = record.values[luta];
-          const raw = (gfa / 1000) * rate * multiplier;
-          const subtotal = Math.ceil(raw);
-          threshold += subtotal;
-          thresholdTotals.push({ label, value: subtotal });
-          ledger.push(calculationStep(
-            `Parking Threshold — ${label}`,
-            [
-              calculationFactor(equationFraction(`${gfa.toLocaleString()} sq. ft.`, "1,000 sq. ft."), floorAreaCitation),
-              calculationFactor(`${displayRate(rate)} parking spaces`, landUseCodeCitation({ value: component.use })[0]),
-              calculationFactor(`${displayNumber(multiplier)} LUTA multiplier`, multiplierCitation)
-            ],
-            raw,
-            subtotal
-          ));
-          return;
+          if (!use) { errors.push(`${label}: select the nonresidential use.`); return; }
+          if (gfa === null) { errors.push(`${label}: enter gross floor area as a whole number greater than zero.`); return; }
+          const rate=POLICY_BASE_RATES[use], record=floorMultiplierRecord(gfa,luta);
+          if (rate == null || !record) { errors.push(`${use}: select a listed use and zoning district.`); return; }
+          const multiplier=record.values[luta], raw=gfa/1000*rate*multiplier, rounded=Math.ceil(raw);
+          threshold += rounded; totals.push({label:use,value:rounded});
+          ledger.push(calculationStep(`Parking Threshold — ${use}`,
+            [calculationFactor(equationFraction(`${gfa.toLocaleString()} sq. ft.`,"1,000 sq. ft."),STATIC_CODE_CITATIONS.floorArea[0]),
+             calculationFactor(`${rate} parking spaces`,landUseCodeCitation({value:use})[0]),
+             calculationFactor(`${displayNumber(multiplier)} LUTA multiplier`,lutaCodeCitation({value:zone})[0])],raw,rounded));
+          if (use === "Use Not Otherwise Specified") reviews.push("Base ratio 2.0 applies unless the Planning Director determines a different listed use is substantially similar.");
         }
-
-        const du = positiveInteger(component.du);
-        const gfa = positiveInteger(component.gfa);
-        if (du === null) errors.push(`${label}: enter dwelling units as a whole number greater than zero.`);
-        if (gfa === null) errors.push(`${label}: enter nonresidential gross floor area as a whole number greater than zero.`);
-        if (!component.mixedUse) errors.push(`${label}: select the nonresidential use within this mixed use.`);
-        if (du === null || gfa === null || !component.mixedUse) return;
-        residentialUnits += du;
-
-        const rate = POLICY_BASE_RATES[component.mixedUse];
-        const resMultiplier = RESIDENTIAL_LUTA_MULTIPLIERS[luta];
-        const resRaw = du * RESIDENTIAL_THRESHOLD_RATE * resMultiplier;
-        const resSubtotal = Math.ceil(resRaw);
-        if (rate === null || rate === undefined) {
-          hasThresholdBlocker = true;
-          manualReview.push(`${component.mixedUse}: The draft table does not provide a usable nonresidential rate.`);
-          ledger.push(calculationStep(
-            `Parking Threshold — ${component.use} Residential`,
-            [
-              calculationFactor(`${du.toLocaleString()} dwellings`, dwellingCitation),
-              calculationFactor(equationFraction(`${displayRate(RESIDENTIAL_THRESHOLD_RATE)} parking spaces`, "dwelling"), residentialThresholdCitation),
-              calculationFactor(`${displayNumber(resMultiplier)} LUTA multiplier`, multiplierCitation)
-            ],
-            resRaw,
-            resSubtotal
-          ));
-          thresholdTotals.push({
-            label: `${component.use} Residential`,
-            value: resSubtotal
-          });
-          return;
-        }
-        const record = floorMultiplierRecord(gfa, luta);
-        const nonresMultiplier = record.values[luta];
-        const nonresRaw = (gfa / 1000) * rate * nonresMultiplier;
-        const nonresSubtotal = Math.ceil(nonresRaw);
-        threshold += resSubtotal + nonresSubtotal;
-        thresholdTotals.push(
-          { label: `${component.use} Residential`, value: resSubtotal },
-          { label: component.mixedUse, value: nonresSubtotal }
-        );
-        ledger.push(calculationStep(
-          `Parking Threshold — ${component.use} Residential`,
-          [
-            calculationFactor(`${du.toLocaleString()} dwellings`, dwellingCitation),
-            calculationFactor(equationFraction(`${displayRate(RESIDENTIAL_THRESHOLD_RATE)} parking spaces`, "dwelling"), residentialThresholdCitation),
-            calculationFactor(`${displayNumber(resMultiplier)} LUTA multiplier`, multiplierCitation)
-          ],
-          resRaw,
-          resSubtotal
-        ));
-        ledger.push(calculationStep(
-          `Parking Threshold — ${component.mixedUse}`,
-          [
-            calculationFactor(equationFraction(`${gfa.toLocaleString()} sq. ft.`, "1,000 sq. ft."), floorAreaCitation),
-            calculationFactor(`${displayRate(rate)} parking spaces`, landUseCodeCitation({ value: component.mixedUse })[0]),
-            calculationFactor(`${displayNumber(nonresMultiplier)} LUTA multiplier`, multiplierCitation)
-          ],
-          nonresRaw,
-          nonresSubtotal
-        ));
       });
-
-      if (thresholdTotals.length > 1 && !hasThresholdBlocker) {
-        ledger.push(calculationTotalStep(thresholdTotals, threshold));
-      }
-
-      if (residentialUnits > 0 && !zone) {
-        errors.push("Select a specific zoning district to calculate required residential spaces.");
-      }
-
       showFormErrors(errors);
       if (errors.length) return;
-
-      const onlyComponent = nonblank.length === 1 ? nonblank[0] : null;
-      const onlyDwellingCount = onlyComponent ? positiveInteger(onlyComponent.du) : null;
-      calculatedAccessibleExempt = Boolean(
-        onlyComponent &&
-        (
-          (onlyComponent.use === "Dwelling, Single or Manufactured" && onlyDwellingCount === 1) ||
-          onlyComponent.use === "Duplex Dwelling"
-        )
-      );
-      calculatedSmallDwellingProject = Boolean(
-        onlyComponent &&
-        ["Dwelling, Single or Manufactured", "Duplex Dwelling", "Three or Four-Dwelling"].includes(onlyComponent.use)
-      );
-
-      const minimumRate = residentialUnits > 0 ? ZONE_MINIMUM_RATES[zone] : 0;
-      calculatedMinimum = Math.ceil(residentialUnits * minimumRate);
-      calculatedThreshold = hasParkingPrincipal || hasThresholdBlocker ? null : threshold;
-
-      const minimumResult = document.getElementById("minimumResult");
-      minimumResult.textContent = calculatedMinimum.toLocaleString();
-      const requiredSpacesLine =
-        residentialUnits === 0
-          ? calculationStep(
-              "Required Parking Spaces",
-              [],
-              0,
-              0,
-              `<span class="calculation-result">0 parking spaces</span> — this project has no residential uses.`
-            )
-          : minimumRate === 0
-            ? calculationStep(
-                "Required Parking Spaces",
-                [],
-                0,
-                0,
-                `<span class="calculation-result">0 parking spaces</span> — ${zone} does not require residential parking.`,
-                minimumCitation
-              )
-            : calculationStep(
-                "Required Parking Spaces",
-                [
-                  calculationFactor(`${residentialUnits.toLocaleString()} dwellings`, dwellingCitation),
-                  calculationFactor(equationFraction(`${displayRate(minimumRate)} parking spaces`, "dwelling"), minimumCitation)
-                ],
-                residentialUnits * minimumRate,
-                calculatedMinimum
-              );
-      ledger.unshift(requiredSpacesLine);
-
-      const thresholdResult = document.getElementById("thresholdResult");
-      const thresholdResultLabel = document.getElementById("thresholdResultLabel");
-      const thresholdResultUnit = document.getElementById("thresholdResultUnit");
-      thresholdResult.classList.toggle("is-text", hasParkingPrincipal || hasThresholdBlocker);
-      if (hasParkingPrincipal) {
-        thresholdResultLabel.textContent = "This use is classified as";
-        thresholdResult.textContent = "Above the parking threshold by default";
-        thresholdResultUnit.textContent = "";
-      } else if (hasThresholdBlocker) {
-        thresholdResultLabel.textContent = "This site’s parking threshold";
-        thresholdResult.textContent = "Cannot be determined";
-        thresholdResultUnit.textContent = "from the draft table";
-      } else {
-        thresholdResultLabel.textContent = "This site’s parking threshold is";
-        thresholdResult.textContent = threshold.toLocaleString();
-        thresholdResultUnit.textContent = "parking spaces";
-      }
-      const rangeStart = Math.max(calculatedMinimum, 1);
-      document.getElementById("atOrBelowRange").textContent =
-        hasParkingPrincipal ? "Not applicable" :
-        hasThresholdBlocker ? "Not determined" :
-        `${rangeStart.toLocaleString()}–${threshold.toLocaleString()} parking spaces`;
-      document.getElementById("aboveThresholdRange").textContent =
-        hasParkingPrincipal ? "Above by default" :
-        hasThresholdBlocker ? "Not determined" :
-        `${(threshold + 1).toLocaleString()} or greater parking spaces`;
-      document.getElementById("calculationLedger").innerHTML = ledger.join("");
-
-      const reviewBox = document.getElementById("manualReviewNotice");
-      reviewBox.innerHTML = manualReview.length ? `<strong>Draft table issue:</strong><ul>${manualReview.map(item => `<li>${item}</li>`).join("")}</ul>` : "";
-      reviewBox.classList.toggle("hidden", manualReview.length === 0);
-
+      const only = components.length === 1 ? components[0] : null;
+      calculatedAccessibleExempt = isAccessibleParkingExempt(components);
+      calculatedSmallDwellingProject = Boolean(only && ["Dwelling, Single or Manufactured","Duplex Dwelling","Three or Four-Dwelling"].includes(only.use));
+      calculatedMinimum = Math.ceil(rawMinimum);
+      calculatedThreshold = hasParkingPrincipal ? null : threshold;
+      if (totals.length > 1) ledger.push(calculationTotalStep(totals,threshold));
+      ledger.unshift(calculationStep("Required Parking Spaces", [], rawMinimum, calculatedMinimum,
+        residentialUnits === 0 ? "0 required spaces — no residential uses." : exempt ? `${zone}: dwellings are exempt from residential minimums.` : minimumTerms.join("<br>")+`${minimumTerms.length > 1 ? `<br>Combined requirement: ${displayNumber(rawMinimum)} spaces.` : ""}${calculatedAduReview ? "<br>ADU minimum requires § 59-96 review." : ""}`, minimumCitation));
+      document.getElementById("minimumResult").textContent=calculatedMinimum.toLocaleString();
+      const thresholdMarker = document.getElementById("thresholdMarkerValue");
+      thresholdMarker.textContent = hasParkingPrincipal ? "Above by Default" : `${threshold.toLocaleString()} spaces`;
+      thresholdMarker.classList.toggle("is-text",hasParkingPrincipal);
+      document.getElementById("atOrBelowRange").textContent=hasParkingPrincipal ? "Not applicable" : `${Math.max(1,calculatedMinimum).toLocaleString()}–${threshold.toLocaleString()} parking spaces`;
+      document.getElementById("aboveThresholdRange").textContent=hasParkingPrincipal ? "Above by default" : `${(threshold+1).toLocaleString()} or greater parking spaces`;
+      document.getElementById("calculationLedger").innerHTML=ledger.join("");
+      const review=document.getElementById("manualReviewNotice");
+      review.innerHTML=reviews.map(text=>`<p>${text}</p>`).join(""); review.classList.toggle("hidden",!reviews.length);
       document.getElementById("calculationResults").classList.remove("hidden");
-      document.getElementById("parkingSupplySection").classList.toggle("hidden", hasThresholdBlocker);
+      document.getElementById("parkingSupplySection").classList.remove("hidden");
       document.getElementById("supplyResults").classList.add("hidden");
       document.getElementById("landscapingSection").classList.add("hidden");
-      document.getElementById("calculationResults").scrollIntoView({ behavior: "smooth", block: "start" });
+      document.getElementById("calculationResults").scrollIntoView({behavior:"smooth",block:"start"});
     }
 
     const INVENTORY_FIELDS = [
@@ -3344,6 +3215,8 @@
           if (error) error.textContent = "";
         }
       });
+      const work = readExistingWork();
+      errors.push(...validateExistingWork(work));
       if (!errors.length) {
         ["perviousSpaces", "evseSpaces", "evReadySpaces", "fabricShadeSpaces", "solarShadeSpaces"].forEach(id => {
           if (values[id] > values.standardSpaces) {
@@ -3436,7 +3309,7 @@
     function calculateParkingAreaCredits(values, originalPoints) {
       const combinedShadeSpaces = values.fabricShadeSpaces + values.solarShadeSpaces;
       const hasRequiredOverlap = combinedShadeSpaces > values.standardSpaces;
-      const solarCredit = values.solarShadeSpaces * 10;
+      const solarCredit = values.solarShadeSpaces * 5;
       const fabricSpacesApplied = hasRequiredOverlap
         ? Math.min(values.fabricShadeSpaces, Math.max(0, values.standardSpaces - values.solarShadeSpaces))
         : values.fabricShadeSpaces;
@@ -3458,6 +3331,15 @@
         lidCredit,
         treeCredit
       };
+    }
+
+    function isAccessibleParkingExempt(components) {
+      if (components.length !== 1) return false;
+      const component = components[0];
+      const dwellings = Number(component.du);
+      // ADU checkboxes are separate from the primary dwelling count.
+      return (component.use === "Dwelling, Single or Manufactured" && dwellings === 1)
+        || (component.use === "Duplex Dwelling" && dwellings === 2);
     }
 
     function calculateAccessibleRequirement(totalOffStreetSpaces) {
@@ -3508,11 +3390,13 @@
     }
 
     function classifyParking() {
-      const { values, errors } = readInventory();
+      const { values: enteredValues, errors } = readInventory();
       const errorBox = document.getElementById("supplyErrors");
       errorBox.innerHTML = errors.length ? `<strong>Please correct the following:</strong><ul>${errors.map(error => `<li>${error}</li>`).join("")}</ul>` : "";
       errorBox.classList.toggle("hidden", errors.length === 0);
       if (errors.length) return;
+      const inventory = parkingInventoryForProject(enteredValues, readExistingWork());
+      const values = inventory.siteValues;
 
       const onStreetTotal = values.parallelSpaces + values.angledSpaces;
       const totalParkingServingSite =
@@ -3535,12 +3419,12 @@
       const minimumStatusCard = document.getElementById("minimumStatusCard");
       minimumStatusCard.classList.remove("is-met", "is-not-met");
       minimumStatusCard.classList.add(minimumMet ? "is-met" : "is-not-met");
-      document.getElementById("minimumCheck").textContent =
-        `${hasResidentialMinimum ? residentialCredit.toLocaleString() : "0"}/${calculatedMinimum.toLocaleString()}`;
+      document.getElementById("minimumCheck").textContent = calculatedMinimum.toLocaleString();
       document.getElementById("minimumCheckText").innerHTML =
         !hasResidentialMinimum
           ? `<p class="calculation-note"><strong>0 required spaces.</strong> This project has no residential parking minimum.</p>`
-          : `<p class="calculation-note"><strong>${residentialCredit.toLocaleString()} qualifying spaces ÷ ${calculatedMinimum.toLocaleString()} required spaces = ${minimumMet ? "minimum met" : "minimum not met"}.</strong></p>`;
+          : `<p class="calculation-note"><strong>${residentialCredit.toLocaleString()} spaces provided ÷ ${calculatedMinimum.toLocaleString()} required spaces = ${minimumMet ? "minimum met" : "minimum not met"}.</strong></p>`;
+      if (calculatedAduReview) document.getElementById("minimumCheckText").innerHTML += '<p class="calculation-note">Principal-dwelling minimum only; ADU minimum requires § 59-96 review.</p>';
       const minimumCitation = lutaCodeCitation(document.getElementById("luta"))[1];
       document.getElementById("minimumCheckCitation").innerHTML =
         minimumCitation ? citationReference(minimumCitation) : "";
@@ -3604,12 +3488,12 @@
         : "";
 
       document.getElementById("accessibleRequirement").textContent =
-        `${accessibleRequired.toLocaleString()} ADA accessible`;
+        calculatedAccessibleExempt ? "0 ADA accessible (exempt)" : `${accessibleRequired.toLocaleString()} ADA accessible`;
       document.getElementById("bicycleRequirement").textContent =
         `${bicycleRequired.toLocaleString()} bicycle ${bicycleRequired === 1 ? "space" : "spaces"}`;
       document.getElementById("accessibleCalculation").innerHTML =
         calculatedAccessibleExempt
-          ? `<p class="calculation-note"><strong>${accessibleCalculationText(offStreetVehicleTotal, accessibleRequired)}.</strong> ${requirementCitation("accessibleSpaces")}</p>`
+          ? `<p class="calculation-note"><strong>${accessibleCalculationText(offStreetVehicleTotal, accessibleRequired)}.</strong> ${requirementCitation("accessibleExemption")}</p>`
           : `<p class="calculation-note"><strong>${accessibleCalculationText(offStreetVehicleTotal, accessibleRequired)}.</strong> Accessible spaces are included within the off-street total. ${requirementCitation("accessibleSpaces")}</p>`;
       document.getElementById("bicycleCalculation").innerHTML =
         `<p class="calculation-note"><strong>${offStreetVehicleTotal.toLocaleString()} total off-street parking spaces, including structured parking → ${bicycleRequired.toLocaleString()} bicycle ${bicycleRequired === 1 ? "space" : "spaces"} required.</strong> The requirement begins when a parking lot exceeds 10 spaces, increases by one for each additional 50 vehicle spaces, and is capped at 10. ${requirementCitation("bicycleSpaces")}</p>`;
@@ -3624,13 +3508,13 @@
         thresholdClass.textContent = "Above Threshold";
         adjustedText.textContent = "Parking Lot as a Principal Use defaults to Above Threshold.";
         thresholdStatusPanel.classList.add("is-above");
-        showLandscape(adjustedCount, true, values);
+        showLandscape(adjustedCount, true, enteredValues);
       } else {
         above = adjustedCount > calculatedThreshold;
         thresholdClass.textContent = above ? "Above Threshold" : "At or Below Threshold";
         adjustedText.textContent = `${adjustedCount} adjusted spaces compared with a threshold of ${calculatedThreshold}.`;
         thresholdStatusPanel.classList.add(above ? "is-above" : "is-at-or-below");
-        showLandscape(adjustedCount, above, values);
+        showLandscape(adjustedCount, above, enteredValues);
       }
 
       const adjustmentRows = [
@@ -3716,29 +3600,29 @@
       const designRequirements = [];
       if (spaces < 1) return { points: 0, breakdown: ["No on-site parking spaces entered."], designRequirements };
       let points = above ? 45 : 30;
-      const breakdown = [`Base minimum for 1–4 spaces: ${points} points.`];
-      if (spaces >= 5) {
-        const count = Math.min(spaces, 149) - 4;
+      const breakdown = [`Base minimum for 1–5 spaces: ${points} points.`];
+      if (spaces >= 6) {
+        const count = Math.min(spaces, 150) - 5;
         const rate = above ? 5 : 3;
         points += count * rate;
-        breakdown.push(`Spaces 5–${Math.min(spaces, 149)}: ${count} × ${rate} = ${count * rate} points.`);
+        breakdown.push(`Spaces 6–${Math.min(spaces, 150)}: ${count} × ${rate} = ${count * rate} points.`);
       }
-      if (spaces >= 150) {
-        const count = Math.min(spaces, 749) - 149;
+      if (spaces >= 151) {
+        const count = Math.min(spaces, 750) - 150;
         const rate = above ? 6 : 4;
         points += count * rate;
-        breakdown.push(`Spaces 150–${Math.min(spaces, 749)}: ${count} × ${rate} = ${count * rate} points.`);
+        breakdown.push(`Spaces 151–${Math.min(spaces, 750)}: ${count} × ${rate} = ${count * rate} points.`);
       }
-      if (spaces >= 750) {
-        const count = Math.min(spaces, 999) - 749;
+      if (spaces >= 751) {
+        const count = Math.min(spaces, 1000) - 750;
         const rate = above ? 7 : 5;
         points += count * rate;
-        breakdown.push(`Spaces 750–${Math.min(spaces, 999)}: ${count} × ${rate} = ${count * rate} points.`);
+        breakdown.push(`Spaces 751–${Math.min(spaces, 1000)}: ${count} × ${rate} = ${count * rate} points.`);
       }
-      if (spaces >= 1000) {
-        const count = spaces - 999;
+      if (spaces > 1000) {
+        const count = spaces - 1000;
         points += count * 20;
-        breakdown.push(`Spaces 1,000 and greater: ${count} × 20 = ${count * 20} points.`);
+        breakdown.push(`Spaces over 1,000: ${count} × 20 = ${count * 20} points.`);
       }
       if (spaces >= 6) {
         const islandSpacing = above ? 6 : 10;
@@ -3761,9 +3645,21 @@
     }
 
     function showLandscape(adjustedCount, above, values) {
-      const landscapeSpaces =
-        values.standardSpaces + values.motorcycleSpaces;
+      const work = readExistingWork();
+      const inventory = parkingInventoryForProject(values, work);
+      const landscapeSpaces = inventory.totalSpaces;
       const result = calculateLandscapePointsRevised(landscapeSpaces, above);
+      const scope = evaluateParkingWork(work, inventory.projectSpaces);
+      if (scope.scope === "none") {
+        document.getElementById("designRequirementsResult").innerHTML = "<p>No parking-area landscape design requirements apply to the project.</p>";
+        document.getElementById("parkingAreaPointsSummary").textContent = "0 points";
+        document.getElementById("landscapeBaseResult").innerHTML = "<p>0 Parking Area Landscaping Points.</p>";
+        document.getElementById("developedAreaResult").classList.add("hidden");
+        document.getElementById("totalSitePointsPanel").classList.add("hidden");
+        document.getElementById("landscapingSection").classList.remove("hidden");
+        lastLandscapePoints = null; lastLandscapeAbove = above; lastLandscapeValues = {...values}; lastLandscapeAdjustedCount = adjustedCount;
+        return;
+      }
       const siteInput = document.getElementById("totalSiteSize");
       const siteError = siteInput.closest(".input-row").querySelector(".field-error");
       const siteSizeDetails = readGrossSiteSize();
@@ -3772,12 +3668,16 @@
       const siteValueIsValid = siteSizeDetails.valid;
       const siteResult = calculateSitePoints(
         totalSiteSize,
-        values.standardSpaces,
+        inventory.siteValues.standardSpaces,
         values.surfaceParkingFootprint,
         values.structuredParkingFootprint,
         siteSizeDetails
       );
-      const parkingAreaCredits = calculateParkingAreaCredits(values, result.points);
+      const reconstructing = scope.scope === "partial";
+      const reconstructed = reconstructing ? scope.spaces : landscapeSpaces;
+      const permitPoints = reconstructing ? result.points * reconstructed / landscapeSpaces : result.points;
+      const designResult = reconstructing ? calculateLandscapePointsRevised(reconstructed, above) : result;
+      const parkingAreaCredits = calculateParkingAreaCredits(values, permitPoints);
       lastLandscapePoints = result.points;
       lastLandscapeSpaces = landscapeSpaces;
       lastLandscapeAbove = above;
@@ -3798,7 +3698,12 @@
           );
         }
       }
-      designRequirements.push(...result.designRequirements);
+      if (calculatedSmallDwellingProject && landscapeSpaces > 0) {
+        designRequirements.push("At least 1 tree within 6 feet of a sidewalk, or within 12 feet of the property line if no sidewalk exists.");
+      } else {
+        designRequirements.push(...designResult.designRequirements);
+      }
+      if (reconstructing) designRequirements.push("Applicable design standards apply to the reconstructed portion.");
       document.getElementById("designRequirementsResult").innerHTML =
         designRequirements.length
           ? `<ul>${designRequirements.map(item => `<li>${item}</li>`).join("")}</ul>
@@ -3807,8 +3712,9 @@
 
       let parkingHTML = '<h4>Base Point Calculation</h4>';
       parkingHTML += `<ul>${result.breakdown.map(item => `<li>${item}</li>`).join("")}</ul>`;
+      if (reconstructing) parkingHTML += `<p>${result.points.toLocaleString()} full-site points × (${reconstructed.toLocaleString()} reconstructed spaces ÷ ${landscapeSpaces.toLocaleString()} total spaces) = <strong>${permitPoints.toLocaleString()} points for reconstruction</strong>. ${citationReference({reference:"59-91.E.3.c — Partial Parking Area Reconstructions",quote:"Full-development landscape points are prorated to the share of spaces being reconstructed."})}</p>`;
       parkingHTML += `<p>${citationReference({
-        reference: "Table 59-44.3 — Cumulative Total Off-Street Surface Parking Landscaping Requirements",
+        reference: "Table 59-91.4 — Total Off-Street Surface Parking Landscaping Requirements",
         quote: "Parking areas use the at-or-below-threshold or above-threshold column, and all requirements within the applicable column are cumulative."
       })}</p>`;
       if (parkingAreaCredits.applied === null) {
@@ -3822,7 +3728,7 @@
         }
         if (parkingAreaCredits.solarCredit > 0) {
           applicableCredits.push(
-            `<li>Solar-panel shade: ${values.solarShadeSpaces.toLocaleString()} spaces × 10 points = <strong>${parkingAreaCredits.solarCredit.toLocaleString()} points</strong>. ${requirementCitation("solarShadeSpaces")}</li>`
+            `<li>Solar-panel shade: ${values.solarShadeSpaces.toLocaleString()} spaces × 5 points = <strong>${parkingAreaCredits.solarCredit.toLocaleString()} points</strong>. ${requirementCitation("solarShadeSpaces")}</li>`
           );
         }
         if (parkingAreaCredits.lidCredit > 0) {
@@ -3846,10 +3752,10 @@
           parkingHTML += '<h4>Applicable Credits</h4>';
           parkingHTML += `<ul>${applicableCredits.join("")}</ul>`;
           parkingHTML += `<p>${creditValues.map(value => value.toLocaleString()).join(" + ")} = <strong>${parkingAreaCredits.requested.toLocaleString()} requested credit points</strong>.</p>`;
-          parkingHTML += `<p>${result.points.toLocaleString()} base points × 50% = <strong>${parkingAreaCredits.cap.toLocaleString()} maximum credit points</strong>.</p>`;
+          parkingHTML += `<p>${permitPoints.toLocaleString()} base points × 50% = <strong>${parkingAreaCredits.cap.toLocaleString()} maximum credit points</strong>.</p>`;
           parkingHTML += `<p>Apply the lesser of ${parkingAreaCredits.requested.toLocaleString()} requested points or the ${parkingAreaCredits.cap.toLocaleString()}-point maximum = <strong>${parkingAreaCredits.applied.toLocaleString()} applied credit points</strong>.</p>`;
         }
-        parkingHTML += `<p><strong>${result.points.toLocaleString()} base points − ${parkingAreaCredits.applied.toLocaleString()} applied credits = ${parkingAreaCredits.remaining.toLocaleString()} Parking Area Landscaping Points.</strong></p>`;
+        parkingHTML += `<p><strong>${permitPoints.toLocaleString()} base points − ${parkingAreaCredits.applied.toLocaleString()} applied credits = ${parkingAreaCredits.remaining.toLocaleString()} Parking Area Landscaping Points.</strong></p>`;
       }
       document.getElementById("landscapeBaseResult").innerHTML = parkingHTML;
       document.getElementById("parkingAreaPointsSummary").textContent =
@@ -3875,7 +3781,7 @@
         document.getElementById("totalSitePointsMath").textContent =
           totalPoints === null
             ? "The parking-area point requirement is not specified in the draft table."
-            : `${parkingAreaCredits.remaining.toLocaleString()} Parking Area Points + ${siteResult.points.toLocaleString()} Developable Area Points`;
+            : `${parkingAreaCredits.remaining.toLocaleString()} Parking Area Points + ${siteResult.points.toLocaleString()} Developed Area Points`;
         totalSitePointsPanel.classList.remove("hidden");
       } else if (siteText !== "") {
         document.getElementById("developedAreaPointsSummary").textContent = "Not calculated";
@@ -3893,6 +3799,11 @@
     }
 
     function resetRevisedCalculator() {
+      document.querySelector('input[name="parkingProject"][value="new"]').checked = true;
+      document.getElementById("existingSpaces").value="";
+      document.getElementById("existingWorkType").value="";
+      updateExistingWorkControls();
+      document.querySelectorAll(".dwelling-controls input").forEach(input => { if (input.type === "checkbox") input.checked = false; else input.value = "0"; });
       document.getElementById("landUse").value = "";
       document.getElementById("mixedUseNonRes").value = "";
       document.getElementById("floorArea").value = "";
@@ -3915,6 +3826,126 @@
       invalidateFromProjectInputs();
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
+
+    function readExistingWork() {
+      const text=document.getElementById("existingSpaces").value.trim();
+      return { existing:document.querySelector('input[name="parkingProject"]:checked').value === "reconstruction",
+        type:document.getElementById("existingWorkType").value,
+        before:text === "" ? null : nonnegativeInteger(text) };
+    }
+    function validateExistingWork(work) {
+      if (!work.existing) return [];
+      const errors=[];
+      if (!work.type) errors.push("Select the existing parking area's project type.");
+      if (!Number.isInteger(work.before)||work.before<1) errors.push("Enter existing spaces as a whole number greater than zero.");
+      return errors;
+    }
+    function parkingInventoryForProject(values,work) {
+      const projectSpaces = values.standardSpaces + values.motorcycleSpaces + values.stackingSpaces + values.queuingSpaces + values.loadingSpaces;
+      const reconstruction = work.existing && ["reconstruction","combined"].includes(work.type);
+      const retainedSpaces = reconstruction ? Math.max(0,work.before-projectSpaces) : 0;
+      return {projectSpaces, totalSpaces:projectSpaces+retainedSpaces,
+        siteValues:{...values,standardSpaces:values.standardSpaces+retainedSpaces}};
+    }
+    function inferParkingChange(work,total) {
+      const delta=total-work.before;
+      return {delta,added:Math.max(0,delta),removed:Math.max(0,-delta),percent:delta/work.before*100};
+    }
+    function evaluateParkingWork(work,total) {
+      const result=(scope,title,reason,citation,spaces=total)=>({scope,title,reason,citation,spaces});
+      if (!work.existing) return result("new","New Parking Area","New parking areas meet the applicable parking-area landscape requirements.","59-91.A.3.b");
+      if (["reconstruction","combined"].includes(work.type)) {
+        if (total === 0) return result("none","No Parking Area Landscape Trigger","No reconstruction spaces were entered.","59-91.E.3.c",0);
+        if (total < work.before) return result("partial","Partial Parking Area Triggered",`${total.toLocaleString()} of ${work.before.toLocaleString()} existing spaces are being reconstructed (${Number((total/work.before*100).toFixed(2))}%). Landscaping points are proportional to this share.`,"59-91.E.3.c",total);
+        return result("entire","Entire Parking Area Triggered","The reconstruction covers the full parking area.","59-91.A.3.b; E.3.c",total);
+      }
+      const change=inferParkingChange(work,total);
+      const math=`${total} completed − ${work.before} existing = ${change.delta>0?"+":""}${change.delta} spaces (${Number(change.percent.toFixed(2))}%)`;
+      if (total === 0) return result("none","No Parking Area Landscape Trigger","No on-site surface parking spaces remain after the project.","59-91.E.3.a",0);
+      if (["addition","combined"].includes(work.type)) {
+        if (change.added*5>=work.before) return result("entire","Entire Parking Area Triggered",`${math}; the net parking addition is at least 20% of existing spaces.`,"59-91.A.3.c; C.4.p");
+        if (work.type === "addition") return result("none","No Parking Area Landscape Trigger",`${math}. ${change.delta<0?"The parking supply is reduced; the addition trigger does not apply.":change.delta===0?"There is no net parking addition.":"The net parking addition is below 20%."}`,"59-91.A.3.c; C.4.p",0);
+      }
+      if (work.type === "buildingAddition") return result("calculation","Parking Area Landscaping Calculation",`${math}. Points below are calculated for the entered parking area; the building-addition applicability test is separate.`,"59-91.A.3.d; C.4.p");
+      if (work.type === "changeUse") return result("calculation","Parking Area Landscaping Calculation","Points below are calculated for the entered parking area; change-of-use applicability is separate.","59-91.A.3.e");
+      if (work.type === "remodel") return result("none","No Parking Area Landscape Trigger","A building remodel without a change of use is exempt from parking-area landscaping; accessible-parking requirements still apply.","59-91.A.4.b",0);
+      return result("calculation","Parking Area Landscaping Calculation","Points below are calculated for the entered parking area.","59-91.A.3");
+    }
+    function updateExistingWorkControls() {
+      const work=readExistingWork();
+      setVisible(document.getElementById("existingProjectTypeRow"),work.existing);
+      setVisible(document.getElementById("existingWorkControls"),work.existing);
+      const reconstruction = work.existing && ["reconstruction","combined"].includes(work.type);
+      const label = document.querySelector('label[for="standardSpaces"]');
+      label.textContent = reconstruction ? "Surface Parking Spaces Being Reconstructed" : work.existing ? "Proposed Surface Parking Spaces" : "Surface Parking Spaces";
+      label.title = reconstruction ? "Enter the spaces in this reconstruction. Existing Spaces supplies the full parking-area count used to prorate landscaping." : "";
+      document.getElementById("standardSpaces").placeholder = reconstruction ? "Spaces in this reconstruction" : "Enter Surface Parking Spaces";
+    }
+
+    let calculatedAduReview = false;
+    function isSingleDwellingUse(use) { return use === "Dwelling, Single or Manufactured" || use === "Land Lease Community"; }
+    function supportsAdu(use) {
+      return ["Dwelling, Single or Manufactured", "Duplex Dwelling", "Three or Four-Dwelling"].includes(use);
+    }
+    function countThresholdDwellings(component) {
+      return Number(component.du) + (supportsAdu(component.use) && component.aduLarge ? 1 : 0);
+    }
+    function countDwellingSizes(sizes) {
+      if (!Array.isArray(sizes) || sizes.length !== 3 || sizes.some(n => !Number.isInteger(n) || n < 0)) return null;
+      const count = sizes.reduce((sum,n) => sum+n,0);
+      return count > 0 ? count : null;
+    }
+    function buildResidentialControls(prefix) {
+      const root=document.createElement("div"); root.className="dwelling-controls hidden"; root.style.display="none";
+      root.innerHTML=`<div class="dwelling-size-grid">
+        <div><label for="${prefix}Small">Dwellings ≤600 sq ft</label><input id="${prefix}Small" type="number" min="0" step="1" value="0" aria-label="Dwellings 600 square feet or less"></div>
+        <div><label for="${prefix}Medium">Dwellings 601–1,250 sq ft</label><input id="${prefix}Medium" type="number" min="0" step="1" value="0" aria-label="Dwellings 601 to 1250 square feet"></div>
+        <div><label for="${prefix}Large">Dwellings &gt;1,250 sq ft</label><input id="${prefix}Large" type="number" min="0" step="1" value="0" aria-label="Dwellings over 1250 square feet"></div>
+      </div><div class="dwelling-options">
+        <label title="Paved street frontage is less than 26 feet from curb face to curb face. At least 1 space per dwelling is required unless exempt."><input class="narrow-street" type="checkbox"> Street &lt;26 ft ⓘ</label>
+        <label class="adu-option" title="One accessory dwelling under 600 square feet. Does not add a dwelling to the threshold count; exclude the ADU from the dwelling inputs. ADU minimums are addressed in § 59-96."><input class="adu-small" type="checkbox"> ADU &lt;600 sq ft ⓘ</label>
+        <label class="adu-option" title="One accessory dwelling 600 square feet or larger. Adds 1 dwelling to the threshold count; exclude the ADU from the dwelling inputs. ADU minimums are addressed in § 59-96."><input class="adu-large" type="checkbox"> ADU ≥600 sq ft (+1) ⓘ</label>
+      </div><p class="dwelling-note"></p>`;
+      root.querySelectorAll("input").forEach(input=>input.addEventListener(input.type === "checkbox" ? "change" : "input",()=>{
+        if (input.checked && input.matches(".adu-small,.adu-large")) root.querySelector(input.matches(".adu-small") ? ".adu-large" : ".adu-small").checked=false;
+        const component=root.closest(".component");
+        updateResidentialControls(component,component.querySelector(".component-use,#landUse").value);
+        invalidateFromProjectInputs();
+      }));
+      return root;
+    }
+    function updateResidentialControls(component,use) {
+      const root=component.querySelector(".dwelling-controls"); if (!root) return;
+      const residential=["residential","mixed"].includes(useType(use));
+      const single=isSingleDwellingUse(use);
+      setVisible(root,residential);
+      setVisible(root.querySelector(".dwelling-size-grid"),residential && !single);
+      const narrowStreet = root.querySelector(".narrow-street");
+      setVisible(narrowStreet.closest("label"), residential && !single);
+      if (single || !residential) narrowStreet.checked = false;
+      root.querySelectorAll(".adu-option").forEach(label=>setVisible(label,supportsAdu(use)));
+      if (!supportsAdu(use)) root.querySelectorAll(".adu-small,.adu-large").forEach(input=>input.checked=false);
+      const du=component.querySelector("#dwellingUnits,.component-du input");
+      component.querySelector('label[for="'+du.id+'"]').textContent=single ? "Dwellings (excluding ADU)" : "Dwelling units";
+      const note=root.querySelector(".dwelling-note");
+      const primaryDwellings = single ? (Number(du.value)||0) : (countDwellingSizes(Array.from(root.querySelectorAll(".dwelling-size-grid input"), input=>nonnegativeInteger(input.value||"0")))||0);
+      note.textContent=supportsAdu(use) && root.querySelector(".adu-large").checked ? `Threshold count: ${primaryDwellings+1} dwellings (includes ADU).` : "";
+      setVisible(note,Boolean(note.textContent));
+    }
+    const primaryDu=document.getElementById("dwellingUnitsContainer");
+    primaryDu.after(buildResidentialControls("primary"));
+    document.getElementById("dwellingUnits").addEventListener("input",()=>updateResidentialControls(document.getElementById("primaryComponent"),document.getElementById("landUse").value));
+    document.querySelectorAll('input[name="parkingProject"]').forEach(input=>input.addEventListener("change",()=>{
+      updateExistingWorkControls();
+      invalidateFromProjectInputs();
+    }));
+    ["existingWorkType","existingSpaces"].forEach(id=>{
+      const input=document.getElementById(id);
+      input.addEventListener(input.tagName === "SELECT" ? "change" : "input",()=>{
+        updateExistingWorkControls();
+        invalidateFromProjectInputs();
+      });
+    });
 
     renamePolicyOptions(document.getElementById("landUse"));
     renamePolicyOptions(document.getElementById("mixedUseNonRes"));
