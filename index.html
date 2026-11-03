@@ -836,7 +836,7 @@
     .dwelling-options { display:flex; flex-wrap:wrap; gap:10px 18px; margin-top:12px; }
     .dwelling-note { font-size:13px; color:#596777; margin:8px 0 0; }
     @media(max-width:600px) { .dwelling-size-grid { gap:8px; } .dwelling-size-grid label { font-size:12px; } }
-    .existing-work-grid { display:grid; grid-template-columns:1fr; gap:14px; margin:0 0 24px; }
+    .existing-work-grid { display:grid; grid-template-columns:minmax(0,1fr) 240px; gap:12px; margin:0 0 24px; }
     .existing-work-grid > div { min-width:0; }
     .existing-work-grid label { display:block; margin-bottom:6px; font-size:13px; font-weight:600; color:#114877; }
     .existing-work-grid input[type="number"],.existing-work-grid select { width:100%; box-sizing:border-box; min-width:0; padding:12px; border:1px solid #A7C7E8; border-radius:6px; font:14px "Inclusive Sans",Arial,sans-serif; background:#fff; }
@@ -846,23 +846,33 @@
     #useInfo, #mixedUseInfo, #lutaInfo, .component-use-info, .component-mixed-info { display:none !important; }
     #existingProjectTypeRow { flex-direction:column; align-items:stretch; gap:6px; }
     #existingProjectTypeRow > label { flex:none; margin:0; font-size:13px; font-weight:600; color:#114877; }
-    #existingProjectTypeRow > label, #existingWorkControls label[for="existingSpaces"] {
+    #existingProjectTypeRow > label, #existingWorkControls label {
       position:absolute; width:1px; height:1px; padding:0; margin:-1px;
       overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0;
     }
-    #existingWorkType, #existingWorkType option { font-family:"Outfit",Arial,sans-serif; font-size:14px; font-weight:400; }
+    .existing-project-type-fields { display:flex; gap:12px; width:100%; min-width:0; }
+    .existing-project-type-fields select { min-width:0; width:100%; }
+    #buildingAdditionPercent { flex:0 1 190px; min-width:0; width:190px; box-sizing:border-box; }
+    .full-area-notice { color:#114877; margin:0 0 14px; }
+    @media(max-width:480px) { .existing-project-type-fields { flex-direction:column; } #buildingAdditionPercent { flex:auto; width:100%; } }
+    #existingWorkType, #existingWorkType option,
+    #buildingAdditionPercent, #existingWorkControls input {
+      font-family:"Outfit",Arial,sans-serif; font-size:14px; font-weight:400;
+      min-height:44px; color:#114877;
+    }
+    #buildingAdditionPercent::placeholder, #existingWorkControls input::placeholder { font-family:inherit; font-size:inherit; font-weight:inherit; }
   </style>
 </head>
 <body>
   <h1>OKC Parking and Landscaping Requirements Calculator</h1>
-  <p class="calculator-subtitle">Version 3.3.12 | November 3, 2026 | For Oklahoma City’s Draft Code Update</p>
+  <p class="calculator-subtitle">Version 3.3.16 | November 3, 2026 | For Oklahoma City’s Draft Code Update</p>
 
   <section class="card" aria-label="Project land uses">
     <div class="project-mode" role="radiogroup" aria-label="Parking area project type">
       <label><input type="radio" name="parkingProject" value="new" checked><span>New Parking Area</span></label>
       <label title="Add to, reconstruct, or modify an existing parking area or its associated building."><input type="radio" name="parkingProject" value="reconstruction"><span>Existing Parking Area</span></label>
     </div>
-      <div id="existingProjectTypeRow" class="input-row hidden" style="display:none"><label for="existingWorkType">Project Type</label><select id="existingWorkType">
+      <div id="existingProjectTypeRow" class="input-row hidden" style="display:none"><label for="existingWorkType">Project Type</label><div class="existing-project-type-fields"><select id="existingWorkType">
         <option value="">Select Project Type</option>
         <option value="addition">Parking Area Addition</option>
         <option value="reconstruction">Parking Area Reconstruction</option>
@@ -870,9 +880,10 @@
         <option value="buildingAddition">Building Addition</option>
         <option value="changeUse">Change of Use</option>
         <option value="remodel">Building Remodel — No Change of Use</option>
-      </select></div>
+      </select><input id="buildingAdditionPercent" class="hidden" style="display:none" type="number" min="0" step="any" placeholder="Building Addition (%)" aria-label="Building Addition (%)" title="Added floor area as a percentage of the existing building's floor area. More than 20% requires full parking-area landscaping."></div></div>
     <div id="existingWorkControls" class="existing-work-grid hidden" style="display:none">
       <div><label for="existingSpaces" title="Existing parking: count on-site surface, motorcycle, stacking, queuing, and loading spaces. Exclude garages and off-site spaces.">Existing Spaces ⓘ</label><input id="existingSpaces" type="number" min="1" step="1" placeholder="Existing Spaces"></div>
+      <div><label for="parkingAreaAge">Age of the Parking Area</label><input id="parkingAreaAge" type="number" min="0" step="1" placeholder="Age of the Parking Area" aria-label="Age of the Parking Area" title="Optional: years since the parking area was built or last reconstructed. At 20 years, landscaping requirements apply to the entire parking area."></div>
     </div>
   <div id="lutaContainer" class="input-row" >
     <label for="luta">LUTA/Zoning District</label>
@@ -3323,7 +3334,7 @@
         requested,
         cap,
         applied,
-        remaining: applied === null ? null : originalPoints - applied,
+        remaining: applied === null ? null : Math.ceil(originalPoints - applied),
         hasRequiredOverlap,
         solarCredit,
         fabricCredit,
@@ -3675,7 +3686,8 @@
       );
       const reconstructing = scope.scope === "partial";
       const reconstructed = reconstructing ? scope.spaces : landscapeSpaces;
-      const permitPoints = reconstructing ? result.points * reconstructed / landscapeSpaces : result.points;
+      const rawPermitPoints = reconstructing ? result.points * reconstructed / landscapeSpaces : result.points;
+      const permitPoints = Math.ceil(rawPermitPoints);
       const designResult = reconstructing ? calculateLandscapePointsRevised(reconstructed, above) : result;
       const parkingAreaCredits = calculateParkingAreaCredits(values, permitPoints);
       lastLandscapePoints = result.points;
@@ -3704,15 +3716,17 @@
         designRequirements.push(...designResult.designRequirements);
       }
       if (reconstructing) designRequirements.push("Applicable design standards apply to the reconstructed portion.");
-      document.getElementById("designRequirementsResult").innerHTML =
+      const fullAreaNotice = scope.fullLotOverride
+        ? `<p class="full-area-notice"><strong>Full Parking Area Requirements Apply.</strong> ${scope.reason}</p>` : "";
+      document.getElementById("designRequirementsResult").innerHTML = fullAreaNotice + (
         designRequirements.length
           ? `<ul>${designRequirements.map(item => `<li>${item}</li>`).join("")}</ul>
              <p>${requirementCitation("parkingAreaDesign")}</p>`
-          : "<p>No space-count-based parking-area design requirement is triggered by the entered surface parking count.</p>";
+          : "<p>No space-count-based parking-area design requirement is triggered by the entered surface parking count.</p>");
 
       let parkingHTML = '<h4>Base Point Calculation</h4>';
       parkingHTML += `<ul>${result.breakdown.map(item => `<li>${item}</li>`).join("")}</ul>`;
-      if (reconstructing) parkingHTML += `<p>${result.points.toLocaleString()} full-site points × (${reconstructed.toLocaleString()} reconstructed spaces ÷ ${landscapeSpaces.toLocaleString()} total spaces) = <strong>${permitPoints.toLocaleString()} points for reconstruction</strong>. ${citationReference({reference:"59-91.E.3.c — Partial Parking Area Reconstructions",quote:"Full-development landscape points are prorated to the share of spaces being reconstructed."})}</p>`;
+      if (reconstructing) parkingHTML += `<p>${result.points.toLocaleString()} full-site points × (${reconstructed.toLocaleString()} reconstructed spaces ÷ ${landscapeSpaces.toLocaleString()} total spaces) = ${rawPermitPoints !== permitPoints ? rawPermitPoints.toLocaleString() + "; round up to " : ""}<strong>${permitPoints.toLocaleString()} points for reconstruction</strong>. ${citationReference({reference:"59-91.E.3.c — Partial Parking Area Reconstructions",quote:"Full-development landscape points are prorated to the share of spaces being reconstructed."})}</p>`;
       parkingHTML += `<p>${citationReference({
         reference: "Table 59-91.4 — Total Off-Street Surface Parking Landscaping Requirements",
         quote: "Parking areas use the at-or-below-threshold or above-threshold column, and all requirements within the applicable column are cumulative."
@@ -3755,7 +3769,7 @@
           parkingHTML += `<p>${permitPoints.toLocaleString()} base points × 50% = <strong>${parkingAreaCredits.cap.toLocaleString()} maximum credit points</strong>.</p>`;
           parkingHTML += `<p>Apply the lesser of ${parkingAreaCredits.requested.toLocaleString()} requested points or the ${parkingAreaCredits.cap.toLocaleString()}-point maximum = <strong>${parkingAreaCredits.applied.toLocaleString()} applied credit points</strong>.</p>`;
         }
-        parkingHTML += `<p><strong>${permitPoints.toLocaleString()} base points − ${parkingAreaCredits.applied.toLocaleString()} applied credits = ${parkingAreaCredits.remaining.toLocaleString()} Parking Area Landscaping Points.</strong></p>`;
+        parkingHTML += `<p><strong>${permitPoints.toLocaleString()} base points − ${parkingAreaCredits.applied.toLocaleString()} applied credits = ${(permitPoints - parkingAreaCredits.applied).toLocaleString()}${parkingAreaCredits.remaining !== permitPoints - parkingAreaCredits.applied ? "; round up to " + parkingAreaCredits.remaining.toLocaleString() : ""} Parking Area Landscaping Points.</strong></p>`;
       }
       document.getElementById("landscapeBaseResult").innerHTML = parkingHTML;
       document.getElementById("parkingAreaPointsSummary").textContent =
@@ -3802,6 +3816,8 @@
       document.querySelector('input[name="parkingProject"][value="new"]').checked = true;
       document.getElementById("existingSpaces").value="";
       document.getElementById("existingWorkType").value="";
+      document.getElementById("buildingAdditionPercent").value="";
+      document.getElementById("parkingAreaAge").value="";
       updateExistingWorkControls();
       document.querySelectorAll(".dwelling-controls input").forEach(input => { if (input.type === "checkbox") input.checked = false; else input.value = "0"; });
       document.getElementById("landUse").value = "";
@@ -3831,13 +3847,20 @@
       const text=document.getElementById("existingSpaces").value.trim();
       return { existing:document.querySelector('input[name="parkingProject"]:checked').value === "reconstruction",
         type:document.getElementById("existingWorkType").value,
-        before:text === "" ? null : nonnegativeInteger(text) };
+        before:text === "" ? null : nonnegativeInteger(text),
+        additionPercent:document.getElementById("buildingAdditionPercent").value.trim() === "" ? null : Number(document.getElementById("buildingAdditionPercent").value),
+        ageYears:document.getElementById("parkingAreaAge").value.trim() === "" ? null : Number(document.getElementById("parkingAreaAge").value) };
+    }
+    function parkingAgeRequiresFullArea(work) {
+      return Number.isInteger(work.ageYears) && work.ageYears >= 20;
     }
     function validateExistingWork(work) {
       if (!work.existing) return [];
       const errors=[];
       if (!work.type) errors.push("Select the existing parking area's project type.");
       if (!Number.isInteger(work.before)||work.before<1) errors.push("Enter existing spaces as a whole number greater than zero.");
+      if (work.type === "buildingAddition" && (work.additionPercent == null || !Number.isFinite(work.additionPercent) || work.additionPercent < 0)) errors.push("Enter the building addition as a percentage of the existing building's floor area.");
+      if (work.ageYears != null && (!Number.isInteger(work.ageYears) || work.ageYears < 0)) errors.push("Enter the parking area age as a whole number of years, zero or greater.");
       return errors;
     }
     function parkingInventoryForProject(values,work) {
@@ -3854,6 +3877,9 @@
     function evaluateParkingWork(work,total) {
       const result=(scope,title,reason,citation,spaces=total)=>({scope,title,reason,citation,spaces});
       if (!work.existing) return result("new","New Parking Area","New parking areas meet the applicable parking-area landscape requirements.","59-91.A.3.b");
+      if (work.type !== "remodel" && (["reconstruction","combined"].includes(work.type) ? Math.max(total,work.before) : total) > 0 && parkingAgeRequiresFullArea(work)) {
+        return {...result("entire","Full Parking Area Requirements Apply","The last installation or reconstruction was at least 20 years ago. Points and design requirements below apply to the entire parking area.","59-91.A.2",Math.max(total,work.before)),fullLotOverride:true};
+      }
       if (["reconstruction","combined"].includes(work.type)) {
         if (total === 0) return result("none","No Parking Area Landscape Trigger","No reconstruction spaces were entered.","59-91.E.3.c",0);
         if (total < work.before) return result("partial","Partial Parking Area Triggered",`${total.toLocaleString()} of ${work.before.toLocaleString()} existing spaces are being reconstructed (${Number((total/work.before*100).toFixed(2))}%). Landscaping points are proportional to this share.`,"59-91.E.3.c",total);
@@ -3866,7 +3892,10 @@
         if (change.added*5>=work.before) return result("entire","Entire Parking Area Triggered",`${math}; the net parking addition is at least 20% of existing spaces.`,"59-91.A.3.c; C.4.p");
         if (work.type === "addition") return result("none","No Parking Area Landscape Trigger",`${math}. ${change.delta<0?"The parking supply is reduced; the addition trigger does not apply.":change.delta===0?"There is no net parking addition.":"The net parking addition is below 20%."}`,"59-91.A.3.c; C.4.p",0);
       }
-      if (work.type === "buildingAddition") return result("calculation","Parking Area Landscaping Calculation",`${math}. Points below are calculated for the entered parking area; the building-addition applicability test is separate.`,"59-91.A.3.d; C.4.p");
+      if (work.type === "buildingAddition") {
+        if (work.additionPercent > 20) return {...result("entire","Full Parking Area Requirements Apply",`The building addition is ${work.additionPercent.toLocaleString()}% of the existing building, exceeding 20%. Points and design requirements below apply to the entire parking area.`,"59-91.A.3.d; C.4.p"),fullLotOverride:true};
+        return result("none","No Parking Area Landscape Trigger","The building addition does not exceed 20% of the existing building.","59-91.A.3.d",0);
+      }
       if (work.type === "changeUse") return result("calculation","Parking Area Landscaping Calculation","Points below are calculated for the entered parking area; change-of-use applicability is separate.","59-91.A.3.e");
       if (work.type === "remodel") return result("none","No Parking Area Landscape Trigger","A building remodel without a change of use is exempt from parking-area landscaping; accessible-parking requirements still apply.","59-91.A.4.b",0);
       return result("calculation","Parking Area Landscaping Calculation","Points below are calculated for the entered parking area.","59-91.A.3");
@@ -3875,6 +3904,9 @@
       const work=readExistingWork();
       setVisible(document.getElementById("existingProjectTypeRow"),work.existing);
       setVisible(document.getElementById("existingWorkControls"),work.existing);
+      const additionInput = document.getElementById("buildingAdditionPercent");
+      setVisible(additionInput,work.existing && work.type === "buildingAddition");
+      additionInput.required = work.existing && work.type === "buildingAddition";
       const reconstruction = work.existing && ["reconstruction","combined"].includes(work.type);
       const label = document.querySelector('label[for="standardSpaces"]');
       label.textContent = reconstruction ? "Surface Parking Spaces Being Reconstructed" : work.existing ? "Proposed Surface Parking Spaces" : "Surface Parking Spaces";
@@ -3939,7 +3971,7 @@
       updateExistingWorkControls();
       invalidateFromProjectInputs();
     }));
-    ["existingWorkType","existingSpaces"].forEach(id=>{
+    ["existingWorkType","existingSpaces","buildingAdditionPercent","parkingAreaAge"].forEach(id=>{
       const input=document.getElementById(id);
       input.addEventListener(input.tagName === "SELECT" ? "change" : "input",()=>{
         updateExistingWorkControls();
