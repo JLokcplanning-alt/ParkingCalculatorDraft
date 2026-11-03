@@ -853,7 +853,8 @@
     .existing-project-type-fields { display:flex; gap:12px; width:100%; min-width:0; }
     .existing-project-type-fields select { min-width:0; width:100%; }
     #buildingAdditionPercent { flex:0 1 190px; min-width:0; width:190px; box-sizing:border-box; }
-    .full-area-notice { color:#114877; margin:0 0 14px; }
+    .full-area-notice, .full-area-notice .calculation-reference { color:#B42318; }
+    .full-area-notice { margin:0 0 14px; }
     @media(max-width:480px) { .existing-project-type-fields { flex-direction:column; } #buildingAdditionPercent { flex:auto; width:100%; } }
     #existingWorkType, #existingWorkType option,
     #buildingAdditionPercent, #existingWorkControls input {
@@ -865,7 +866,7 @@
 </head>
 <body>
   <h1>OKC Parking and Landscaping Requirements Calculator</h1>
-  <p class="calculator-subtitle">Version 3.3.16 | November 3, 2026 | For Oklahoma City’s Draft Code Update</p>
+  <p class="calculator-subtitle">Version 3.4 | November 3, 2026 | For Oklahoma City’s Draft Code Update</p>
 
   <section class="card" aria-label="Project land uses">
     <div class="project-mode" role="radiogroup" aria-label="Parking area project type">
@@ -1448,7 +1449,7 @@
     </details>
 
     <div id="totalSitePointsPanel" class="final-total-panel hidden">
-      <p>Total Site Landscaping Points</p>
+      <p id="totalSitePointsHeading">Total Site Landscaping Points</p>
       <strong id="totalSitePointsResult">—</strong>
       <p id="totalSitePointsMath"></p>
     </div>
@@ -3677,14 +3678,14 @@
       const siteText = siteSizeDetails.text;
       const totalSiteSize = siteSizeDetails.squareFeet;
       const siteValueIsValid = siteSizeDetails.valid;
-      const siteResult = calculateSitePoints(
+      const reconstructing = scope.scope === "partial";
+      const siteResult = reconstructing ? null : calculateSitePoints(
         totalSiteSize,
         inventory.siteValues.standardSpaces,
         values.surfaceParkingFootprint,
         values.structuredParkingFootprint,
         siteSizeDetails
       );
-      const reconstructing = scope.scope === "partial";
       const reconstructed = reconstructing ? scope.spaces : landscapeSpaces;
       const rawPermitPoints = reconstructing ? result.points * reconstructed / landscapeSpaces : result.points;
       const permitPoints = Math.ceil(rawPermitPoints);
@@ -3695,8 +3696,8 @@
       lastLandscapeAbove = above;
       lastLandscapeAdjustedCount = adjustedCount;
       lastLandscapeValues = { ...values };
-      siteInput.setAttribute("aria-invalid", siteValueIsValid ? "false" : "true");
-      siteError.textContent = siteValueIsValid ? "" : "Enter a gross site size greater than zero.";
+      siteInput.setAttribute("aria-invalid", reconstructing || siteValueIsValid ? "false" : "true");
+      siteError.textContent = reconstructing || siteValueIsValid ? "" : "Enter a gross site size greater than zero.";
 
       const designRequirements = [];
       if (landscapeSpaces > 0) {
@@ -3717,7 +3718,7 @@
       }
       if (reconstructing) designRequirements.push("Applicable design standards apply to the reconstructed portion.");
       const fullAreaNotice = scope.fullLotOverride
-        ? `<p class="full-area-notice"><strong>Full Parking Area Requirements Apply.</strong> ${scope.reason}</p>` : "";
+        ? `<p class="full-area-notice"><strong>Full Parking Area Requirements Apply.</strong> ${scope.reason} ${citationReference({reference:scope.citation.split(";")[0],quote:scope.reason})}</p>` : "";
       document.getElementById("designRequirementsResult").innerHTML = fullAreaNotice + (
         designRequirements.length
           ? `<ul>${designRequirements.map(item => `<li>${item}</li>`).join("")}</ul>
@@ -3780,7 +3781,17 @@
       const developedAreaResult = document.getElementById("developedAreaResult");
       const developedAreaCalculation = document.getElementById("developedAreaCalculation");
       const totalSitePointsPanel = document.getElementById("totalSitePointsPanel");
-      if (siteResult.valid) {
+      document.getElementById("totalSitePointsHeading").textContent = reconstructing
+        ? "Partial Reconstructed Portion Total Landscaping Points" : "Total Site Landscaping Points";
+      if (reconstructing) {
+        developedAreaCalculation.innerHTML = "";
+        document.getElementById("developedAreaPointsSummary").textContent = "—";
+        developedAreaResult.classList.add("hidden");
+        document.getElementById("totalSitePointsResult").textContent = parkingAreaCredits.remaining === null
+          ? "Not determined" : `${parkingAreaCredits.remaining.toLocaleString()} points`;
+        document.getElementById("totalSitePointsMath").textContent = "";
+        totalSitePointsPanel.classList.remove("hidden");
+      } else if (siteResult.valid) {
         const totalPoints = parkingAreaCredits.remaining === null
           ? null
           : parkingAreaCredits.remaining + siteResult.points;
@@ -3878,7 +3889,7 @@
       const result=(scope,title,reason,citation,spaces=total)=>({scope,title,reason,citation,spaces});
       if (!work.existing) return result("new","New Parking Area","New parking areas meet the applicable parking-area landscape requirements.","59-91.A.3.b");
       if (work.type !== "remodel" && (["reconstruction","combined"].includes(work.type) ? Math.max(total,work.before) : total) > 0 && parkingAgeRequiresFullArea(work)) {
-        return {...result("entire","Full Parking Area Requirements Apply","The last installation or reconstruction was at least 20 years ago. Points and design requirements below apply to the entire parking area.","59-91.A.2",Math.max(total,work.before)),fullLotOverride:true};
+        return {...result("entire","Full Parking Area Requirements Apply","The parking area is at least 20 years old. The entire parking area must be brought into landscaping compliance; partial reconstruction does not qualify for proportional requirements.","59-91.A.2",Math.max(total,work.before)),fullLotOverride:true};
       }
       if (["reconstruction","combined"].includes(work.type)) {
         if (total === 0) return result("none","No Parking Area Landscape Trigger","No reconstruction spaces were entered.","59-91.E.3.c",0);
@@ -3893,7 +3904,7 @@
         if (work.type === "addition") return result("none","No Parking Area Landscape Trigger",`${math}. ${change.delta<0?"The parking supply is reduced; the addition trigger does not apply.":change.delta===0?"There is no net parking addition.":"The net parking addition is below 20%."}`,"59-91.A.3.c; C.4.p",0);
       }
       if (work.type === "buildingAddition") {
-        if (work.additionPercent > 20) return {...result("entire","Full Parking Area Requirements Apply",`The building addition is ${work.additionPercent.toLocaleString()}% of the existing building, exceeding 20%. Points and design requirements below apply to the entire parking area.`,"59-91.A.3.d; C.4.p"),fullLotOverride:true};
+        if (work.additionPercent > 20) return {...result("entire","Full Parking Area Requirements Apply",`The building addition is ${work.additionPercent.toLocaleString()}% of the existing building, exceeding 20%. The entire parking area must be brought into compliance with landscaping points and design requirements.`,"59-91.A.3.d; C.4.p"),fullLotOverride:true};
         return result("none","No Parking Area Landscape Trigger","The building addition does not exceed 20% of the existing building.","59-91.A.3.d",0);
       }
       if (work.type === "changeUse") return result("calculation","Parking Area Landscaping Calculation","Points below are calculated for the entered parking area; change-of-use applicability is separate.","59-91.A.3.e");
