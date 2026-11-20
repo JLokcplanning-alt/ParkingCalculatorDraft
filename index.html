@@ -2598,12 +2598,11 @@
           option.textContent = replacement;
         }
       });
-      if (!Array.from(select.options).some(option => option.value === "Use Not Otherwise Specified")) {
-        const option = document.createElement("option");
-        option.value = "Use Not Otherwise Specified";
-        option.textContent = "Use Not Otherwise Specified";
-        select.appendChild(option);
-      }
+      // Exclude the catch-all category from the selectable land uses.
+      // Keep the underlying policy reference intact elsewhere in the calculator.
+      Array.from(select.options)
+        .filter(option => option.value === "Use Not Otherwise Specified")
+        .forEach(option => option.remove());
     }
 
     function enhanceGroupedSelect(select) {
