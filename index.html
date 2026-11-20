@@ -1285,7 +1285,7 @@
           <table class="reference-table">
             <thead>
               <tr>
-                <th scope="col">Project Size</th>
+                <th scope="col">Combined Nonresidential GFA</th>
                 <th scope="col" class="numeric">Downtown / Urban High</th>
                 <th scope="col" class="numeric">Urban Medium</th>
                 <th scope="col" class="numeric">Urban Low / Rural</th>
@@ -3092,6 +3092,16 @@
       const errors = [], ledger = [], totals = [], minimumTerms = [], reviews = [];
       let threshold = 0, rawMinimum = 0, residentialUnits = 0;
       const hasParkingPrincipal = components.some(component => component.use === "Parking Lot as a Principal Use");
+      // All nonresidential uses (including nonresidential mixed-use portions) share
+      // the size-based LUTA multiplier from the project's combined nonresidential GFA.
+      // Residential floor area is excluded; residential LUTA multipliers remain 1.000.
+      const nonResidentialComponents = components.filter(component =>
+        ["nonresidential", "mixed"].includes(useType(component.use))
+      );
+      const combinedNonResidentialGfa = nonResidentialComponents.reduce((sum, component) =>
+        sum + (positiveInteger(component.gfa) || 0), 0
+      );
+      const combinedNonResidentialRecord = floorMultiplierRecord(combinedNonResidentialGfa, luta);
       calculatedAduReview = false;
       if (!document.getElementById("landUse").value) errors.push("Select at least one land use.");
       if (!zone) errors.push("Select a LUTA or zoning district.");
@@ -3099,6 +3109,19 @@
       if (hasParkingPrincipal && components.length > 1) errors.push("Parking Lot as a Principal Use must be calculated by itself.");
       const exempt = ZONE_MINIMUM_RATES[zone] === 0;
       const minimumCitation = lutaCodeCitation({value:zone})[1];
+      if (nonResidentialComponents.length > 1 && combinedNonResidentialGfa > 0 && luta) {
+        const areas = nonResidentialComponents.map(component =>
+          (positiveInteger(component.gfa) || 0).toLocaleString() + " sq. ft."
+        ).join(" + ");
+        ledger.push(`<li class="calculation-step">
+          <div class="calculation-title">Shared Nonresidential LUTA Multiplier</div>
+          <div class="calculation-explanation">
+            Combined gross floor area: ${areas} = <strong>${combinedNonResidentialGfa.toLocaleString()} sq. ft.</strong>
+            <div>Project size bracket: ${escapeHtml(combinedNonResidentialRecord.label)}.</div>
+            <div>${escapeHtml(luta)}: <strong>${displayMultiplier(combinedNonResidentialRecord.values[luta])} LUTA multiplier</strong> applied to every nonresidential use. Residential uses retain a 1.000 multiplier.</div>
+          </div>
+        </li>`);
+      }
       components.forEach(component => {
         const type = useType(component.use), label = component.use;
         if (type === "parking") return;
@@ -3141,7 +3164,7 @@
           const gfa = positiveInteger(component.gfa);
           if (!use) { errors.push(`${label}: select the nonresidential use.`); return; }
           if (gfa === null) { errors.push(`${label}: enter gross floor area as a whole number greater than zero.`); return; }
-          const rate=POLICY_BASE_RATES[use], record=floorMultiplierRecord(gfa,luta);
+          const rate=POLICY_BASE_RATES[use], record=combinedNonResidentialRecord;
           if (rate == null || !record) { errors.push(`${use}: select a listed use and zoning district.`); return; }
           const multiplier=record.values[luta], raw=gfa/1000*rate*multiplier, rounded=Math.ceil(raw);
           threshold += rounded; totals.push({label:use,value:rounded});
